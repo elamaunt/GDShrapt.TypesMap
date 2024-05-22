@@ -6,6 +6,10 @@
     <Nullable>enable</Nullable>
     <AssemblyVersion>4.2.2</AssemblyVersion>
     <FileVersion>4.2.2</FileVersion>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Version>4.2.2</Version>
+    <RepositoryUrl>https://github.com/elamaunt/GDShrapt.TypesMap</RepositoryUrl>
+    <PackageTags>GDShrapt;Types;GodotSharp;Map;Bindings;GDScript;Godot</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
