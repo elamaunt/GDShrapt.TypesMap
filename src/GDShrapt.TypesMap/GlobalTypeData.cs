@@ -5,13 +5,19 @@ namespace GDShrapt.TypesMap
     {
         public Dictionary<string, List<MethodData>> MethodDatas { get; } = new Dictionary<string, List<MethodData>>();
         public Dictionary<string, PropertyData> PropertyDatas { get; } = new Dictionary<string, PropertyData>();
-        public Dictionary<string, (string, string)> Constants { get; } = new Dictionary<string, (string, string)>();
-        public Dictionary<string, EnumTypeInfo> Enums { get; } = new Dictionary<string, EnumTypeInfo>();
-        public Dictionary<string, EnumTypeInfo> EnumsConstants { get; private set; } = new Dictionary<string, EnumTypeInfo>();
+        public Dictionary<string, ConstantInfo> Constants { get; } = new Dictionary<string, ConstantInfo>();
+        public Dictionary<string, List<EnumTypeInfo>> Enums { get; } = new Dictionary<string, List<EnumTypeInfo>>();
+        public Dictionary<string, List<EnumTypeInfo>> EnumsConstants { get; private set; } = new Dictionary<string, List<EnumTypeInfo>>();
 
         public void BuildEnumsConstants()
         {
-            EnumsConstants = Enums.SelectMany(x => x.Value.Values!.Keys.Select(y => (y, x.Value))).ToDictionary(x => x.y, x => x.Value);
+            EnumsConstants = Enums
+                .SelectMany(x => x.Value.SelectMany(y => y.Values!.Keys.Select(y => (y, x.Value))))
+                .GroupBy(x => x.y)
+                .ToDictionary(
+                    x => x.Key, 
+                    x => x.SelectMany(y => y.Value).ToList()
+                );
         }
     }
 }

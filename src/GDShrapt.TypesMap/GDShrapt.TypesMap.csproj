@@ -1,19 +1,24 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>4.2.2</AssemblyVersion>
-    <FileVersion>4.2.2</FileVersion>
+    <AssemblyVersion>4.2.1</AssemblyVersion>
+    <FileVersion>4.2.1</FileVersion>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>4.2.2</Version>
+    <Version>4.2.1</Version>
     <RepositoryUrl>https://github.com/elamaunt/GDShrapt.TypesMap</RepositoryUrl>
     <PackageTags>GDShrapt;Types;GodotSharp;Map;Bindings;GDScript;Godot</PackageTags>
+    <Company>elamaunt</Company>
+    <Authors>elamaunt</Authors>
+    <Description>A library that builds map for Godot Engine embedded types to match gdscript names with the names exported to C#
+
+Just call GodotTypeHelper.ExtractTypeDatas() to build a types map from the Godot environment.</Description>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GodotSharp" Version="4.2.2" />
+    <PackageReference Include="GodotSharp" Version="4.2.1" />
     <PackageReference Include="Mono.Cecil" Version="0.11.5" />
   </ItemGroup>
 

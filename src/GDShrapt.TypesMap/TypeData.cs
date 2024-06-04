@@ -8,7 +8,7 @@
         public Dictionary<string, PropertyData> PropertyDatas { get; }
         public Dictionary<string, SignalData> SignalDatas { get; }
 
-        public Dictionary<string, string> Constants { get; }
+        public Dictionary<string, ConstantInfo> Constants { get; }
         public Dictionary<string, EnumTypeInfo> Enums { get; }
         public Dictionary<string, EnumTypeInfo> EnumsConstants { get; }
 
@@ -17,7 +17,7 @@
             Dictionary<string, PropertyData> propertyDatas, 
             Dictionary<string, SignalData> signalDatas,
             Dictionary<string, EnumTypeInfo> enumDatas,
-            Dictionary<string, string> constants)
+            Dictionary<string, ConstantInfo> constants)
         {
             MethodDatas = methodDatas;
             PropertyDatas = propertyDatas;
