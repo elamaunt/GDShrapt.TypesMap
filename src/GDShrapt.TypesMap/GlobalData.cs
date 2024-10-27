@@ -1,13 +1,14 @@
 ﻿
 namespace GDShrapt.TypesMap
 {
-    public class GlobalTypeData
+    public class GlobalData
     {
         public Dictionary<string, List<MethodData>> MethodDatas { get; } = new Dictionary<string, List<MethodData>>();
         public Dictionary<string, PropertyData> PropertyDatas { get; } = new Dictionary<string, PropertyData>();
         public Dictionary<string, ConstantInfo> Constants { get; } = new Dictionary<string, ConstantInfo>();
         public Dictionary<string, List<EnumTypeInfo>> Enums { get; } = new Dictionary<string, List<EnumTypeInfo>>();
         public Dictionary<string, List<EnumTypeInfo>> EnumsConstants { get; private set; } = new Dictionary<string, List<EnumTypeInfo>>();
+        public Dictionary<string, GlobalTypeProxyInfo> GlobalTypes { get; } = new Dictionary<string, GlobalTypeProxyInfo>();
 
         public void BuildEnumsConstants()
         {

@@ -1,9 +1,168 @@
 ﻿using Godot;
+using GodotDictionary = Godot.Collections.Dictionary;
+using GodotArray = Godot.Collections.Array;
 
 namespace GDShrapt.TypesMap
 {
     public static partial class GodotTypeHelper
     {
+        private static void AddEmbeddedGlobalConstants(Dictionary<string, ConstantInfo> constants)
+        {
+            constants["PI"] = new ConstantInfo("PI", nameof(Mathf.Pi), typeof(double), typeof(Mathf));
+            constants["TAU"] = new ConstantInfo("TAU", nameof(Mathf.Tau), typeof(double), typeof(Mathf));
+            constants["INF"] = new ConstantInfo("INF", nameof(Mathf.Inf), typeof(double), typeof(Mathf));
+            constants["NAN"] = new ConstantInfo("NAN", nameof(Mathf.NaN), typeof(double), typeof(Mathf));
+        }
+
+        private static void AddEmbeddedGlobalMethods(Dictionary<string, List<MethodData>> methodDatas)
+        {
+            methodDatas["abs"] = new List<MethodData>() { new MethodData("abs", typeof(Mathf).GetMethod(nameof(Mathf.Abs), new Type[] { typeof(double) })!) };
+            methodDatas["absf"] = new List<MethodData>() { new MethodData("absf", typeof(Mathf).GetMethod(nameof(Mathf.Abs), new Type[] { typeof(float) })!) };
+            methodDatas["acos"] = new List<MethodData>() { new MethodData("acos", typeof(Mathf).GetMethod(nameof(Mathf.Acos), new Type[] { typeof(double) })!) };
+            methodDatas["asin"] = new List<MethodData>() { new MethodData("asin", typeof(Mathf).GetMethod(nameof(Mathf.Asin), new Type[] { typeof(double) })!) };
+            methodDatas["atan"] = new List<MethodData>() { new MethodData("atan", typeof(Mathf).GetMethod(nameof(Mathf.Atan), new Type[] { typeof(double) })!) };
+            methodDatas["atan2"] = new List<MethodData>() { new MethodData("atan2", typeof(Mathf).GetMethod(nameof(Mathf.Atan2), new Type[] { typeof(double), typeof(double) })!) };
+            methodDatas["bezier_derivative"] = new List<MethodData>() { new MethodData("bezier_derivative", typeof(Mathf).GetMethod(nameof(Mathf.BezierDerivative), new Type[] { typeof(double), typeof(double), typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["bezier_interpolate"] = new List<MethodData>() { new MethodData("bezier_interpolate", typeof(Mathf).GetMethod(nameof(Mathf.BezierInterpolate), new Type[] { typeof(double), typeof(double), typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["bytes_to_var"] = new List<MethodData>() { new MethodData("bytes_to_var", typeof(GD).GetMethod(nameof(GD.BytesToVar))!) };
+            methodDatas["bytes_to_var_with_objects"] = new List<MethodData>() { new MethodData("bytes_to_var_with_objects", typeof(GD).GetMethod(nameof(GD.BytesToVarWithObjects))!) };
+            methodDatas["ceil"] = new List<MethodData>() { new MethodData("ceil", typeof(Mathf).GetMethod(nameof(Mathf.Ceil), new Type[] { typeof(double) })!) };
+            methodDatas["ceilf"] = new List<MethodData>() { new MethodData("ceilf", typeof(Mathf).GetMethod(nameof(Mathf.Ceil), new Type[] { typeof(float) })!) };
+            methodDatas["ceili"] = new List<MethodData>() { new MethodData("ceili", typeof(Mathf).GetMethod(nameof(Mathf.CeilToInt), new Type[] { typeof(double) })!) };
+            methodDatas["clamp"] = new List<MethodData>() { new MethodData("clamp", typeof(Mathf).GetMethod(nameof(Mathf.Clamp), new Type[] { typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["clampf"] = new List<MethodData>() { new MethodData("clampf", typeof(Mathf).GetMethod(nameof(Mathf.Clamp), new Type[] { typeof(float), typeof(float), typeof(float) })!) };
+            methodDatas["clampi"] = new List<MethodData>() { new MethodData("clampi", typeof(Mathf).GetMethod(nameof(Mathf.Clamp), new Type[] { typeof(int), typeof(int), typeof(int) })!) };
+            methodDatas["cos"] = new List<MethodData>() { new MethodData("cos", typeof(Mathf).GetMethod(nameof(Mathf.Cos), new Type[] { typeof(double) })!) };
+            methodDatas["cosh"] = new List<MethodData>() { new MethodData("cosh", typeof(Mathf).GetMethod(nameof(Mathf.Cosh), new Type[] { typeof(double) })!) };
+            methodDatas["cubic_interpolate"] = new List<MethodData>() { new MethodData("cubic_interpolate", typeof(Mathf).GetMethod(nameof(Mathf.CubicInterpolate), new Type[] { typeof(double), typeof(double), typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["cubic_interpolate_angle"] = new List<MethodData>() { new MethodData("cubic_interpolate_angle", typeof(Mathf).GetMethod(nameof(Mathf.CubicInterpolateAngle), new Type[] { typeof(double), typeof(double), typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["cubic_interpolate_angle_in_time"] = new List<MethodData>() { new MethodData("cubic_interpolate_angle_in_time", typeof(Mathf).GetMethod(nameof(Mathf.CubicInterpolateAngleInTime), new Type[] { typeof(double), typeof(double), typeof(double), typeof(double), typeof(double), typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["cubic_interpolate_in_time"] = new List<MethodData>() { new MethodData("cubic_interpolate_in_time", typeof(Mathf).GetMethod(nameof(Mathf.CubicInterpolateInTime), new Type[] { typeof(double), typeof(double), typeof(double), typeof(double), typeof(double), typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["db_to_linear"] = new List<MethodData>() { new MethodData("db_to_linear", typeof(Mathf).GetMethod(nameof(Mathf.DbToLinear), new Type[] { typeof(double) })!) };
+            methodDatas["deg_to_rad"] = new List<MethodData>() { new MethodData("deg_to_rad", typeof(Mathf).GetMethod(nameof(Mathf.DegToRad), new Type[] { typeof(double) })!) };
+            methodDatas["ease"] = new List<MethodData>() { new MethodData("ease", typeof(Mathf).GetMethod(nameof(Mathf.Ease), new Type[] { typeof(double), typeof(double) })!) };
+            methodDatas["error_string"] = new List<MethodData>() { new MethodData("error_string", typeof(Error).GetMethod(nameof(Error.ToString), new Type[] { })!) };
+            methodDatas["exp"] = new List<MethodData>() { new MethodData("exp", typeof(Mathf).GetMethod(nameof(Mathf.Exp), new Type[] { typeof(double) })!) };
+            methodDatas["floor"] = new List<MethodData>() { new MethodData("floor", typeof(Mathf).GetMethod(nameof(Mathf.Floor), new Type[] { typeof(double) })!) };
+            methodDatas["floorf"] = new List<MethodData>() { new MethodData("floorf", typeof(Mathf).GetMethod(nameof(Mathf.Floor), new Type[] { typeof(float) })!) };
+            methodDatas["floori"] = new List<MethodData>() { new MethodData("floori", typeof(Mathf).GetMethod(nameof(Mathf.FloorToInt), new Type[] { typeof(double) })!) };
+            methodDatas["fposmod"] = new List<MethodData>() { new MethodData("fposmod", typeof(Mathf).GetMethod(nameof(Mathf.PosMod), new Type[] { typeof(float), typeof(float) })!) };
+            methodDatas["hash"] = new List<MethodData>() { new MethodData("hash", typeof(GD).GetMethod(nameof(GD.Hash))!) };
+            methodDatas["instance_from_id"] = new List<MethodData>() { new MethodData("instance_from_id", typeof(GodotObject).GetMethod(nameof(GodotObject.InstanceFromId))!) };
+            methodDatas["inverse_lerp"] = new List<MethodData>() { new MethodData("inverse_lerp", typeof(Mathf).GetMethod(nameof(Mathf.InverseLerp), new Type[] { typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["is_equal_approx"] = new List<MethodData>() { new MethodData("is_equal_approx", typeof(Mathf).GetMethod(nameof(Mathf.IsEqualApprox), new Type[] { typeof(double), typeof(double) })!) };
+            methodDatas["is_finite"] = new List<MethodData>() { new MethodData("is_finite", typeof(Mathf).GetMethod(nameof(Mathf.IsFinite), new Type[] { typeof(double) })!) };
+            methodDatas["is_inf"] = new List<MethodData>() { new MethodData("is_inf", typeof(Mathf).GetMethod(nameof(Mathf.IsInf), new Type[] { typeof(double) })!) };
+            methodDatas["is_instance_id_valid"] = new List<MethodData>() { new MethodData("is_instance_id_valid", typeof(GodotObject).GetMethod(nameof(GodotObject.IsInstanceIdValid))!) };
+            methodDatas["is_instance_valid"] = new List<MethodData>() { new MethodData("is_instance_valid", typeof(GodotObject).GetMethod(nameof(GodotObject.IsInstanceValid))!) };
+            methodDatas["is_nan"] = new List<MethodData>() { new MethodData("is_nan", typeof(Mathf).GetMethod(nameof(Mathf.IsNaN), new Type[] { typeof(double) })!) };
+            methodDatas["is_same"] = new List<MethodData>() { new MethodData("is_same", typeof(object).GetMethod(nameof(object.ReferenceEquals))!) };
+            methodDatas["is_zero_approx"] = new List<MethodData>() { new MethodData("is_zero_approx", typeof(Mathf).GetMethod(nameof(Mathf.IsZeroApprox), new Type[] { typeof(double) })!) };
+            methodDatas["lerp"] = new List<MethodData>() { new MethodData("lerp", typeof(Mathf).GetMethod(nameof(Mathf.Lerp), new Type[] { typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["lerp_angle"] = new List<MethodData>() { new MethodData("lerp_angle", typeof(Mathf).GetMethod(nameof(Mathf.LerpAngle), new Type[] { typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["lerpf"] = new List<MethodData>() { new MethodData("lerpf", typeof(Mathf).GetMethod(nameof(Mathf.Lerp), new Type[] { typeof(float), typeof(float) , typeof(float) })!) };
+            methodDatas["linear_to_db"] = new List<MethodData>() { new MethodData("linear_to_db", typeof(Mathf).GetMethod(nameof(Mathf.LinearToDb), new Type[] { typeof(double) })!) };
+            methodDatas["log"] = new List<MethodData>() { new MethodData("log", typeof(Mathf).GetMethod(nameof(Mathf.Log), new Type[] { typeof(double) })!) };
+            methodDatas["max"] = new List<MethodData>() { new MethodData("max", typeof(Mathf).GetMethod(nameof(Mathf.Max), new Type[] { typeof(double), typeof(double) })!) };
+            methodDatas["maxf"] = new List<MethodData>() { new MethodData("maxf", typeof(Mathf).GetMethod(nameof(Mathf.Max), new Type[] { typeof(float), typeof(float) })!) };
+            methodDatas["maxi"] = new List<MethodData>() { new MethodData("maxi", typeof(Mathf).GetMethod(nameof(Mathf.Max), new Type[] { typeof(int), typeof(int) })!) };
+            methodDatas["min"] = new List<MethodData>() { new MethodData("min", typeof(Mathf).GetMethod(nameof(Mathf.Min), new Type[] { typeof(double), typeof(double) })!) };
+            methodDatas["minf"] = new List<MethodData>() { new MethodData("minf", typeof(Mathf).GetMethod(nameof(Mathf.Min), new Type[] { typeof(float), typeof(float) })!) };
+            methodDatas["mini"] = new List<MethodData>() { new MethodData("mini", typeof(Mathf).GetMethod(nameof(Mathf.Min), new Type[] { typeof(int), typeof(int) })!) };
+            methodDatas["move_toward"] = new List<MethodData>() { new MethodData("move_toward", typeof(Mathf).GetMethod(nameof(Mathf.MoveToward), new Type[] { typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["nearest_po2"] = new List<MethodData>() { new MethodData("nearest_po2", typeof(Mathf).GetMethod(nameof(Mathf.NearestPo2))!) };
+            methodDatas["pingpong"] = new List<MethodData>() { new MethodData("pingpong", typeof(Mathf).GetMethod(nameof(Mathf.PingPong), new Type[] { typeof(double), typeof(double) })!) };
+            methodDatas["posmod"] = new List<MethodData>() { new MethodData("posmod", typeof(Mathf).GetMethod(nameof(Mathf.PosMod), new Type[] { typeof(double), typeof(double) })!) };
+            methodDatas["pow"] = new List<MethodData>() { new MethodData("pow", typeof(Mathf).GetMethod(nameof(Mathf.Pow), new Type[] { typeof(double), typeof(double) })!) };
+            methodDatas["print"] = new List<MethodData>() { new MethodData("print", typeof(GD).GetMethod(nameof(GD.Print), new Type[] { typeof(object[]) })!) };
+            methodDatas["print_rich"] = new List<MethodData>() { new MethodData("print_rich", typeof(GD).GetMethod(nameof(GD.PrintRich), new Type[] { typeof(object[]) })!) };
+            methodDatas["print_verbose"] = new List<MethodData>() { new MethodData("print_verbose", typeof(GD).GetMethod(nameof(GD.Print), new Type[] { typeof(object[]) })!) };
+            methodDatas["printerr"] = new List<MethodData>() { new MethodData("printerr", typeof(GD).GetMethod(nameof(GD.PrintErr), new Type[] { typeof(object[]) })!) };
+            methodDatas["printraw"] = new List<MethodData>() { new MethodData("printraw", typeof(GD).GetMethod(nameof(GD.PrintRaw), new Type[] { typeof(object[]) })!) };
+            methodDatas["prints"] = new List<MethodData>() { new MethodData("prints", typeof(GD).GetMethod(nameof(GD.PrintS))!) };
+            methodDatas["printt"] = new List<MethodData>() { new MethodData("printt", typeof(GD).GetMethod(nameof(GD.PrintT))!) };
+            methodDatas["push_error"] = new List<MethodData>() { new MethodData("push_error", typeof(GD).GetMethod(nameof(GD.PushError), new Type[] { typeof(object[]) })!) };
+            methodDatas["push_warning"] = new List<MethodData>() { new MethodData("push_warning", typeof(GD).GetMethod(nameof(GD.PushWarning), new Type[] { typeof(object[]) })!) };
+            methodDatas["rad_to_deg"] = new List<MethodData>() { new MethodData("rad_to_deg", typeof(Mathf).GetMethod(nameof(Mathf.RadToDeg), new Type[] { typeof(double) })!) };
+            methodDatas["rand_from_seed"] = new List<MethodData>() { new MethodData("rand_from_seed", typeof(GD).GetMethod(nameof(GD.RandFromSeed))!) };
+            methodDatas["randf"] = new List<MethodData>() { new MethodData("randf", typeof(GD).GetMethod(nameof(GD.Randf))!) };
+            methodDatas["rand_range"] = new List<MethodData>() { new MethodData("rand_range", typeof(GD).GetMethod(nameof(GD.RandRange), new Type[] { typeof(double), typeof(double) })!) };
+            methodDatas["randf_range"] = new List<MethodData>() { new MethodData("randf_range", typeof(GD).GetMethod(nameof(GD.RandRange), new Type[] { typeof(double), typeof(double) })!) };
+            methodDatas["randfn"] = new List<MethodData>() { new MethodData("randfn", typeof(GD).GetMethod(nameof(GD.Randfn))!) };
+            methodDatas["randi"] = new List<MethodData>() { new MethodData("randi", typeof(GD).GetMethod(nameof(GD.Randi))!) };
+            methodDatas["randi_range"] = new List<MethodData>() { new MethodData("randi_range", typeof(GD).GetMethod(nameof(GD.RandRange), new Type[] { typeof(int), typeof(int) })!) };
+            methodDatas["randomize"] = new List<MethodData>() { new MethodData("randomize", typeof(GD).GetMethod(nameof(GD.Randomize))!) };
+            methodDatas["remap"] = new List<MethodData>() { new MethodData("remap", typeof(Mathf).GetMethod(nameof(Mathf.Remap), new Type[] { typeof(double), typeof(double), typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["round"] = new List<MethodData>() { new MethodData("round", typeof(Mathf).GetMethod(nameof(Mathf.Round), new Type[] { typeof(double) })!) };
+            methodDatas["roundf"] = new List<MethodData>() { new MethodData("roundf", typeof(Mathf).GetMethod(nameof(Mathf.Round), new Type[] { typeof(float) })!) };
+            methodDatas["roundi"] = new List<MethodData>() { new MethodData("roundi", typeof(Mathf).GetMethod(nameof(Mathf.RoundToInt), new Type[] { typeof(double) })!) };
+            methodDatas["seed"] = new List<MethodData>() { new MethodData("seed", typeof(GD).GetMethod(nameof(GD.Seed))!) };
+            methodDatas["sign"] = new List<MethodData>() { new MethodData("sign", typeof(Mathf).GetMethod(nameof(Mathf.Sign), new Type[] { typeof(double) })!) };
+            methodDatas["signf"] = new List<MethodData>() { new MethodData("signf", typeof(Mathf).GetMethod(nameof(Mathf.Sign), new Type[] { typeof(float) })!) };
+            methodDatas["signi"] = new List<MethodData>() { new MethodData("signi", typeof(Mathf).GetMethod(nameof(Mathf.Sign), new Type[] { typeof(int) })!) };
+            methodDatas["sin"] = new List<MethodData>() { new MethodData("sin", typeof(Mathf).GetMethod(nameof(Mathf.Sin), new Type[] { typeof(double) })!) };
+            methodDatas["sinh"] = new List<MethodData>() { new MethodData("sinh", typeof(Mathf).GetMethod(nameof(Mathf.Sinh), new Type[] { typeof(double) })!) };
+            methodDatas["smoothstep"] = new List<MethodData>() { new MethodData("smoothstep", typeof(Mathf).GetMethod(nameof(Mathf.SmoothStep), new Type[] { typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["snapped"] = new List<MethodData>() { new MethodData("snapped", typeof(Mathf).GetMethod(nameof(Mathf.Snapped), new Type[] { typeof(double), typeof(double) })!) };
+            methodDatas["snappedf"] = new List<MethodData>() { new MethodData("snappedf", typeof(Mathf).GetMethod(nameof(Mathf.Snapped), new Type[] { typeof(float), typeof(float) })!) };
+            methodDatas["snappedi"] = new List<MethodData>() { new MethodData("snappedi", typeof(Mathf).GetMethod(nameof(Mathf.Snapped), new Type[] { typeof(int), typeof(int) })!) };
+            methodDatas["sqrt"] = new List<MethodData>() { new MethodData("sqrt", typeof(Mathf).GetMethod(nameof(Mathf.Sqrt), new Type[] { typeof(double) })!) };
+            methodDatas["step_decimals"] = new List<MethodData>() { new MethodData("step_decimals", typeof(Mathf).GetMethod(nameof(Mathf.StepDecimals))!) };
+            methodDatas["str_to_var"] = new List<MethodData>() { new MethodData("str_to_var", typeof(GD).GetMethod(nameof(GD.StrToVar))!) };
+            methodDatas["tan"] = new List<MethodData>() { new MethodData("tan", typeof(Mathf).GetMethod(nameof(Mathf.Tan), new Type[] { typeof(double) })!) };
+            methodDatas["tanh"] = new List<MethodData>() { new MethodData("tanh", typeof(Mathf).GetMethod(nameof(Mathf.Tanh), new Type[] { typeof(double) })!) };
+            methodDatas["typeof"] = new List<MethodData>() { new MethodData("typeof", typeof(Variant).GetMethod("get_" + nameof(Variant.VariantType))!) };
+            methodDatas["var_to_str"] = new List<MethodData>() { new MethodData("var_to_str", typeof(GD).GetMethod(nameof(GD.VarToStr))!) };
+            methodDatas["wrap"] = new List<MethodData>() { new MethodData("wrap", typeof(Mathf).GetMethod(nameof(Mathf.Wrap), new Type[] { typeof(double), typeof(double), typeof(double) })!) };
+            methodDatas["wrapf"] = new List<MethodData>() { new MethodData("wrapf", typeof(Mathf).GetMethod(nameof(Mathf.Wrap), new Type[] { typeof(float), typeof(float), typeof(float) })!) };
+            methodDatas["wrapi"] = new List<MethodData>() { new MethodData("wrapi", typeof(Mathf).GetMethod(nameof(Mathf.Wrap), new Type[] { typeof(int), typeof(int), typeof(int) })!) };
+            methodDatas["var_to_bytes"] = new List<MethodData>() { new MethodData("var_to_bytes", typeof(GD).GetMethod(nameof(GD.VarToBytes))!) };
+            methodDatas["var_to_bytes_with_objects"] = new List<MethodData>() { new MethodData("var_to_bytes_with_objects", typeof(GD).GetMethod(nameof(GD.VarToBytesWithObjects))!) };
+            methodDatas["weakref"] = new List<MethodData>() { new MethodData("weakref", typeof(GodotObject).GetMethod(nameof(GodotObject.WeakRef))!) };
+        }
+
+        private static void AddEmbeddedGlobalTypes(Dictionary<string, GlobalTypeProxyInfo> typeDatas)
+        {
+            typeDatas["nil"] = new GlobalTypeProxyInfo(typeof(Godot.Variant), "null");
+            typeDatas["bool"] = new GlobalTypeProxyInfo(typeof(bool));
+            typeDatas["float"] = new GlobalTypeProxyInfo(typeof(double));
+            typeDatas["int"] = new GlobalTypeProxyInfo(typeof(long));
+            typeDatas["string"] = new GlobalTypeProxyInfo(typeof(string));
+            typeDatas["vector2"] = new GlobalTypeProxyInfo(typeof(Vector2));
+            typeDatas["vector2i"] = new GlobalTypeProxyInfo(typeof(Vector2I));
+            typeDatas["rect2"] = new GlobalTypeProxyInfo(typeof(Rect2));
+            typeDatas["rect2i"] = new GlobalTypeProxyInfo(typeof(Rect2I));
+            typeDatas["vector3"] = new GlobalTypeProxyInfo(typeof(Vector3));
+            typeDatas["vector3i"] = new GlobalTypeProxyInfo(typeof(Vector3I));
+            typeDatas["transform2d"] = new GlobalTypeProxyInfo(typeof(Transform2D));
+            typeDatas["vector4"] = new GlobalTypeProxyInfo(typeof(Vector4));
+            typeDatas["vector4i"] = new GlobalTypeProxyInfo(typeof(Vector4I));
+            typeDatas["plane"] = new GlobalTypeProxyInfo(typeof(Plane));
+            typeDatas["quaternion"] = new GlobalTypeProxyInfo(typeof(Quaternion));
+            typeDatas["aabb"] = new GlobalTypeProxyInfo(typeof(Aabb));
+            typeDatas["basis"] = new GlobalTypeProxyInfo(typeof(Basis));
+            typeDatas["transform3d"] = new GlobalTypeProxyInfo(typeof(Transform3D));
+            typeDatas["projection"] = new GlobalTypeProxyInfo(typeof(Projection));
+            typeDatas["color"] = new GlobalTypeProxyInfo(typeof(Color));
+            typeDatas["stringname"] = new GlobalTypeProxyInfo(typeof(StringName));
+            typeDatas["nodepath"] = new GlobalTypeProxyInfo(typeof(NodePath));
+            typeDatas["rid"] = new GlobalTypeProxyInfo(typeof(Rid));
+            typeDatas["object"] = new GlobalTypeProxyInfo(typeof(GodotObject));
+            typeDatas["callable"] = new GlobalTypeProxyInfo(typeof(Callable));
+            typeDatas["signal"] = new GlobalTypeProxyInfo(typeof(Signal));
+            typeDatas["dictionary"] = new GlobalTypeProxyInfo(typeof(GodotDictionary));
+            typeDatas["array"] = new GlobalTypeProxyInfo(typeof(GodotArray));
+            typeDatas["packedbytearray"] = new GlobalTypeProxyInfo(typeof(List<byte>));
+            typeDatas["packedint32array"] = new GlobalTypeProxyInfo(typeof(List<int>));
+            typeDatas["packedint64array"] = new GlobalTypeProxyInfo(typeof(List<long>));
+            typeDatas["packedfloat32array"] = new GlobalTypeProxyInfo(typeof(List<float>));
+            typeDatas["packedfloat64array"] = new GlobalTypeProxyInfo(typeof(List<double>));
+            typeDatas["packedstringarray"] = new GlobalTypeProxyInfo(typeof(List<string>));
+            typeDatas["packedvector2array"] = new GlobalTypeProxyInfo(typeof(List<Vector2>));
+            typeDatas["packedvector3array"] = new GlobalTypeProxyInfo(typeof(List<Vector3>));
+            typeDatas["packedcolorarray"] = new GlobalTypeProxyInfo(typeof(List<Color>));
+        }
+
         private static void AddEmbeddedGlobalEnums(Dictionary<string, List<EnumTypeInfo>> dictionary)
         {
             Add(dictionary, "Side", new EnumTypeInfo("", typeof(Side),

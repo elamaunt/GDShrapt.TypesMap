@@ -58,7 +58,12 @@ namespace GDShrapt.TypesMap
             var types = assembly.ExportedTypes.ToArray();
 
             var typeDatas = new Dictionary<string, Dictionary<string, TypeData>>();
-            var globalData = new GlobalTypeData();
+            var globalData = new GlobalData();
+
+            AddEmbeddedGlobalEnums(globalData.Enums);
+            AddEmbeddedGlobalMethods(globalData.MethodDatas);
+            AddEmbeddedGlobalConstants(globalData.Constants);
+            AddEmbeddedGlobalTypes(globalData.GlobalTypes);
 
             var unresolvedBundle = new UnresolvedBundle();
 
@@ -86,7 +91,6 @@ namespace GDShrapt.TypesMap
                 dict.Add(t.FullName!, ExtractTypeData(globalData, name, definition, t, unresolvedBundle, manualMappedGlobalTypes));
             }
 
-            AddEmbeddedGlobalEnums(globalData.Enums);
             globalData.BuildEnumsConstants();
 
             unresolvedBundle.Print();
@@ -95,7 +99,7 @@ namespace GDShrapt.TypesMap
             return new GodotAssemblyData(globalData, typeDatas);
         }
 
-        private static TypeData ExtractTypeData(GlobalTypeData globalData, string godotTypeName, AssemblyDefinition definition, Type type, UnresolvedBundle bundle, HashSet<Type> manualMappedGlobalTypes)
+        private static TypeData ExtractTypeData(GlobalData globalData, string godotTypeName, AssemblyDefinition definition, Type type, UnresolvedBundle bundle, HashSet<Type> manualMappedGlobalTypes)
         {
             var methodDatas = ExtractMethods(definition, type);
             var propertyDatas = ExtractProperties(definition, type);
@@ -318,7 +322,7 @@ namespace GDShrapt.TypesMap
                 }
 
                 for (int i = 0; i < dotNetConstants.Length; i++)
-                    constants.Add(godotConstants[i], new ConstantInfo(godotConstants[i], dotNetConstants[i], type.BaseType ?? typeof(long)));
+                    constants.Add(godotConstants[i], new ConstantInfo(godotConstants[i], dotNetConstants[i], type.BaseType ?? typeof(long), type));
             }
             else
             {
@@ -335,7 +339,7 @@ namespace GDShrapt.TypesMap
                 }
 
                 for (int i = 0; i < dotNetConstants.Length; i++)
-                    constants.Add(godotConstants[i], new ConstantInfo(godotConstants[i], dotNetConstants[i].Name, dotNetConstants[i].FieldType));
+                    constants.Add(godotConstants[i], new ConstantInfo(godotConstants[i], dotNetConstants[i].Name, dotNetConstants[i].FieldType, type));
             }
 
             return constants;
