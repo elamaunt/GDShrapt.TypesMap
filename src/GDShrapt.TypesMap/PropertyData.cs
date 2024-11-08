@@ -4,14 +4,24 @@ namespace GDShrapt.TypesMap
 {
     public class PropertyData
     {
-        public string Name { get; }
-        public PropertyInfo Property { get; }
-        public string PropertyTypeName { get; }
-        public PropertyData(string name, PropertyInfo info)
+        public string? Name { get; set; }
+        public string? CSharpName { get; set; }
+        public string? PropertyTypeName { get; set; }
+        public bool CanWrite { get; set; }
+        public bool CanRead { get; set; }
+
+        public PropertyData()
+        {
+
+        }
+
+        internal PropertyData(string name, PropertyInfo info)
         {
             Name = name;
-            Property = info;
+            CSharpName = info.Name;
             PropertyTypeName = info.PropertyType.Name;
+            CanWrite = info.CanWrite;
+            CanRead = info.CanRead;
         }
     }
 }

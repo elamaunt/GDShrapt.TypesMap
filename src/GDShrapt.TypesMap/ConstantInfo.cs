@@ -1,21 +1,23 @@
-﻿using System.Reflection.Metadata.Ecma335;
-
-namespace GDShrapt.TypesMap
+﻿namespace GDShrapt.TypesMap
 {
     public class ConstantInfo
     {
+        public string? Name { get; set; }
+        public string? Value { get; set; }
+        public string? ValueTypeName { get; set; }
+        public string? ContainingTypeName { get; set; }
 
-        public string Name { get; }
-        public string Value { get; }
-        public Type ValueType { get; }
-        public Type ContainingType { get; }
+        public ConstantInfo()
+        {
+
+        }
 
         public ConstantInfo(string name, string value, Type valueType, Type containingType)
         {
             Name = name;
             Value = value;
-            ValueType = valueType;
-            ContainingType = containingType;
+            ValueTypeName = valueType.Name;
+            ContainingTypeName = containingType.Name;
         }
     }
 }

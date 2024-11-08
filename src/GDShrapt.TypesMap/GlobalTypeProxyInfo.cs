@@ -3,11 +3,17 @@ namespace GDShrapt.TypesMap
 {
     public class GlobalTypeProxyInfo
     {
-        public Type Type { get; }
-        public string? ValueEqvivalent { get; }
-        public GlobalTypeProxyInfo(Type type, string? valueEqvivalent = null)
+        public string? TypeName { get; set; }
+        public string? ValueEqvivalent { get; set; }
+
+        public GlobalTypeProxyInfo()
         {
-            Type = type;
+
+        }
+
+        internal GlobalTypeProxyInfo(Type type, string? valueEqvivalent = null)
+        {
+            TypeName = type.Name;
             ValueEqvivalent = valueEqvivalent;
         }
     }

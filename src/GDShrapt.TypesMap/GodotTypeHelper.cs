@@ -2,6 +2,7 @@
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System.Reflection;
+using System.Text.Json;
 
 namespace GDShrapt.TypesMap
 {
@@ -9,44 +10,50 @@ namespace GDShrapt.TypesMap
     {
         internal static UnresolvedBundle? LastUnresolvedBundle { get; private set; }
 
-        /* private static bool TryParseJsonFromManifest<T>(string fileName, out T? values) where T : class
-         {
-             var data = ReadManifestFile(fileName);
+        private static bool TryParseJsonFromManifest<T>(string fileName, out T? values) where T : class
+        {
+            var data = ReadManifestFile(fileName);
 
-             if (data == null)
-             {
-                 values = null;
-                 return false;
-             }
+            if (data == null)
+            {
+                values = null;
+                return false;
+            }
 
-             values = JsonSerializer.Deserialize<T?>(data);
-             return values != null;
-         }*/
+            values = JsonSerializer.Deserialize<T?>(data);
+            return values != null;
+        }
 
-        /* private static string? ReadManifestFile(string name)
-         {
-             var assembly = typeof(GodotTypeHelper).Assembly;
+        private static string? ReadManifestFile(string name)
+        {
+            var assembly = typeof(GodotTypeHelper).Assembly;
 
-             try
-             {
-                 var stream = assembly.GetManifestResourceStream($"GDShrapt.TypesMap.Files.{name}");
+            try
+            {
+                var stream = assembly.GetManifestResourceStream($"GDShrapt.TypesMap.Files.{name}");
 
-                 if (stream == null)
-                     return null;
+                if (stream == null)
+                    return null;
 
-                 using (stream)
-                 {
-                     var reader = new StreamReader(stream);
-                     return reader.ReadToEnd();
-                 }
-             }
-             catch (FileNotFoundException)
-             {
-                 return null;
-             }
-         }
-        */
-        public static GodotAssemblyData ExtractTypeDatas()
+                using (stream)
+                {
+                    var reader = new StreamReader(stream);
+                    return reader.ReadToEnd();
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                return null;
+            }
+        }
+
+        public static GodotAssemblyData? ExtractTypeDatasFromManifest()
+        {
+            TryParseJsonFromManifest<GodotAssemblyData>("AssemblyData.json", out var data);
+            return data;
+        }
+
+        public static GodotAssemblyData ExtractTypeDatasFromAssembly()
         {
             return ExtractDataFromAssembly();
         }
@@ -93,8 +100,8 @@ namespace GDShrapt.TypesMap
 
             globalData.BuildEnumsConstants();
 
-            unresolvedBundle.Print();
-            LastUnresolvedBundle = unresolvedBundle;
+            //unresolvedBundle.Print();
+            //LastUnresolvedBundle = unresolvedBundle;
 
             return new GodotAssemblyData(globalData, typeDatas);
         }
@@ -137,7 +144,7 @@ namespace GDShrapt.TypesMap
                 }
             }
 
-            return new TypeData(type, methodDatas, propertyDatas, signalDatas, enums, constants);
+            return new TypeData(godotTypeName, type, methodDatas, propertyDatas, signalDatas, enums, constants);
         }
 
         private static Dictionary<string, List<MethodData>> ExtractMethods(AssemblyDefinition definition, Type type)
@@ -267,11 +274,11 @@ namespace GDShrapt.TypesMap
                 {
                     if (!type.Name.EndsWith("Instance", StringComparison.Ordinal))
                     {
-                        GD.Print($"DotNet type for godots enum type not found: {godotTypeName}.{godotEnum}");
+                       // GD.Print($"DotNet type for godots enum type not found: {godotTypeName}.{godotEnum}");
                         // GD.Print($"DotNet parent type: {type}");
                         // GD.Print($"DotNet nested types: {string.Join(", ", type.GetNestedTypes().Select(x => x.Name))}");
 
-                        bundle.AddEnumIgnore(godotTypeName, godotEnum);
+                       // bundle.AddEnumIgnore(godotTypeName, godotEnum);
                     }
                     continue;
                 }
@@ -309,7 +316,7 @@ namespace GDShrapt.TypesMap
 
                 if (dotNetConstants.Length != godotConstants.Length)
                 {
-                    GD.Print("Ignoring type constants fot godots enum type: " + godotTypeName);
+                    //GD.Print("Ignoring type constants fot godots enum type: " + godotTypeName);
                     //var enums = ClassDB.ClassGetEnumList(godotTypeName, true);
                     // GD.Print($"Enums inside declaring class {declaringTypeName}: " + string.Join(", ",enums));
 
@@ -317,7 +324,7 @@ namespace GDShrapt.TypesMap
                     //    GD.Print(godotConstants[i]);
                     //for (int i = 0; i < dotNetConstants.Length; i++)
                     //    GD.Print(dotNetConstants[i]);
-                    bundle.AddConstantsTypeIgnore(godotTypeName, type);
+                    //bundle.AddConstantsTypeIgnore(godotTypeName, type);
                     return constants;
                 }
 

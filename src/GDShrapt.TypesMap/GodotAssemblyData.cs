@@ -3,10 +3,15 @@ namespace GDShrapt.TypesMap
 {
     public class GodotAssemblyData
     {
-        public GlobalData GlobalData { get; }
-        public Dictionary<string, Dictionary<string, TypeData>> TypeDatas { get; }
+        public GlobalData? GlobalData { get; set; }
+        public Dictionary<string, Dictionary<string, TypeData>>? TypeDatas { get; set; }
 
-        public GodotAssemblyData(GlobalData globalData, Dictionary<string, Dictionary<string, TypeData>> typeDatas)
+        public GodotAssemblyData()
+        {
+
+        }
+
+        internal GodotAssemblyData(GlobalData globalData, Dictionary<string, Dictionary<string, TypeData>> typeDatas)
         {
             GlobalData = globalData;
             TypeDatas = typeDatas;
