@@ -189,7 +189,7 @@ namespace GDShrapt.TypesMap
 
                     if (methodDatas.ContainsKey(loadedString))
                     {
-                        //GD.Print($"Key already handled for C# godot's method name: '{loadedString}', Type name: '{godotTypeName}'");
+                        GD.Print($"Key already handled for C# godot's method name: '{loadedString}', Type name: '{godotTypeName}'");
                         // if (!ClassDB.ClassHasMethod(godotTypeName, loadedString))
                         // {
 
@@ -211,7 +211,7 @@ namespace GDShrapt.TypesMap
                     }
                     else
                     {
-                        var list = methods.Where(x => x.Name == operand.Name).Select(x => new MethodData(operand.Name, x)).ToList();
+                        var list = methods.Where(x => x.Name == operand.Name).Select(x => new MethodData(loadedString, x)).ToList();
                         methodDatas.Add(loadedString, list);
 
                        /* if (replacedString != null)
