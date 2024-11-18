@@ -87,7 +87,7 @@ namespace GDShrapt.TypesMap
 
                 if (t.Name.EndsWith("Instance", StringComparison.Ordinal))
                 {
-                    GD.Print("Skip type " + t.Name);
+                    //GD.Print("Skip type " + t.Name);
                     continue;
                 }
 
@@ -150,10 +150,13 @@ namespace GDShrapt.TypesMap
 
         private static Dictionary<string, List<MethodData>> ExtractMethods(string godotTypeName, AssemblyDefinition definition, Type type)
         {
+           // GD.Print($"TYPE: {godotTypeName}");
             var methodNamesType = type.GetNestedType("MethodName");
 
             if (methodNamesType == null)
                 return new Dictionary<string, List<MethodData>>();
+
+            bool printed = false;
 
             var methodNameTypeDefinition = definition.MainModule.GetType(methodNamesType.DeclaringType.FullName + "/MethodName");
             var constructorBody = methodNameTypeDefinition.Methods.FirstOrDefault(m => m.Name == ".cctor")?.Body;
@@ -165,6 +168,7 @@ namespace GDShrapt.TypesMap
             var methodDatas = new Dictionary<string, List<MethodData>>();
 
             string? loadedString = null;
+            string? replacedString = null;
 
             foreach (Instruction instruction in constructorBody.Instructions)
             {
@@ -177,40 +181,79 @@ namespace GDShrapt.TypesMap
                     if (loadedString == null)
                         continue;
 
-                    if (loadedString.Length > 1 && !ClassDB.ClassHasMethod(godotTypeName, loadedString) && loadedString.StartsWith('_'))
+                    //if (loadedString.Length > 1 && !ClassDB.ClassHasMethod(godotTypeName, loadedString) && loadedString.StartsWith('_'))
+                    //{
+
+                    //    replacedString = ToGodotStyleWithEarth(loadedString);
+                    //}
+
+                    if (methodDatas.ContainsKey(loadedString))
                     {
-                        var b = new StringBuilder(loadedString.Length + 4);
+                        //GD.Print($"Key already handled for C# godot's method name: '{loadedString}', Type name: '{godotTypeName}'");
+                        // if (!ClassDB.ClassHasMethod(godotTypeName, loadedString))
+                        // {
 
-                        b.Append(char.ToLowerInvariant(loadedString[1]));
+                        //}
 
-                        for (int i = 2; i < loadedString.Length; i++)
+                        /*if (!printed)
                         {
-                            if (char.IsUpper(loadedString[i]))
-                            {
-                                b.Append('_');
-                                b.Append(char.ToLowerInvariant(loadedString[i]));
-                            }
-                            else
-                            {
-                                b.Append(char.ToLowerInvariant(loadedString[i]));
-                            }
-                        }
+                            printed = true;
 
-                        loadedString = b.ToString();
+                            var classMethods = ClassDB.ClassGetMethodList(godotTypeName);
+                            var builder = new StringBuilder();
+                            for (int i = 0; i < classMethods.Count; i++)
+                            {
+                                builder.Append($"|{classMethods[i]["name"]}");
+                            }
 
-                        if (!ClassDB.ClassHasMethod(godotTypeName, loadedString))
+                            GD.Print(builder.ToString());
+                        }*/
+                    }
+                    else
+                    {
+                        var list = methods.Where(x => x.Name == operand.Name).Select(x => new MethodData(operand.Name, x)).ToList();
+                        methodDatas.Add(loadedString, list);
+
+                       /* if (replacedString != null)
                         {
-                            GD.Print($"Unknown C# godot's method name: '{loadedString}'");
-                        }
+                            var withStart = "_" + loadedString;
+
+                            if (!methodDatas.ContainsKey(withStart))
+                                methodDatas.Add(withStart, list);
+                        }*/
                     }
 
-                    methodDatas.Add(loadedString, methods.Where(x => x.Name == operand.Name).Select(x => new MethodData(operand.Name, x)).ToList());
                     loadedString = null;
                 }
             }
 
             return methodDatas;
         }
+
+       /* private static string ToGodotStyleWithEarth(string? loadedString)
+        {
+            string? replacedString;
+            var b = new StringBuilder(loadedString.Length + 4);
+
+            b.Append('_');
+            b.Append(char.ToLowerInvariant(loadedString[1]));
+
+            for (int i = 2; i < loadedString.Length; i++)
+            {
+                if (char.IsUpper(loadedString[i]))
+                {
+                    b.Append('_');
+                    b.Append(char.ToLowerInvariant(loadedString[i]));
+                }
+                else
+                {
+                    b.Append(char.ToLowerInvariant(loadedString[i]));
+                }
+            }
+
+            replacedString = loadedString;
+            return replacedString;
+        }*/
 
         private static Dictionary<string, PropertyData> ExtractProperties(AssemblyDefinition definition, Type type)
         {
@@ -332,7 +375,7 @@ namespace GDShrapt.TypesMap
 
                 if (declaring == null)
                 {
-                    GD.Print("Found global enum type. Should be handled manually: " + godotTypeName);
+                    //GD.Print("Found global enum type. Should be handled manually: " + godotTypeName);
                     bundle.AddGlobalEnumIgnore(godotTypeName, type);
                     return constants;
                 }
@@ -366,8 +409,8 @@ namespace GDShrapt.TypesMap
 
                 if (dotNetConstants.Length != godotConstants.Length)
                 {
-                    GD.Print("Ignoring type constants fot godots type: " + godotTypeName);
-                    GD.Print("Dotnet type: " + type.FullName);
+                    //GD.Print("Ignoring type constants fot godots type: " + godotTypeName);
+                    //GD.Print("Dotnet type: " + type.FullName);
 
                     bundle.AddConstantsTypeIgnore(godotTypeName, type);
                     return constants;
@@ -426,7 +469,9 @@ namespace GDShrapt.TypesMap
                     if (first != null)
                         name = first;
                     else
-                        GD.Print($"Declaring type does not contain the enum. DeclaringType: {declaringTypeName}, Enum: {name}. ");
+                    {
+                        //GD.Print($"Declaring type does not contain the enum. DeclaringType: {declaringTypeName}, Enum: {name}. ");
+                    }
                 }
             }
 
