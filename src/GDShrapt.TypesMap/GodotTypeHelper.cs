@@ -2,6 +2,7 @@
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System.Reflection;
+using System.Text;
 using System.Text.Json;
 
 namespace GDShrapt.TypesMap
@@ -108,7 +109,7 @@ namespace GDShrapt.TypesMap
 
         private static TypeData ExtractTypeData(GlobalData globalData, string godotTypeName, AssemblyDefinition definition, Type type, UnresolvedBundle bundle, HashSet<Type> manualMappedGlobalTypes)
         {
-            var methodDatas = ExtractMethods(definition, type);
+            var methodDatas = ExtractMethods(godotTypeName, definition, type);
             var propertyDatas = ExtractProperties(definition, type);
             var signalDatas = ExtractSignals(definition, type);
             var enums = ExtractEnums(godotTypeName, type, bundle);
@@ -147,7 +148,7 @@ namespace GDShrapt.TypesMap
             return new TypeData(godotTypeName, type, methodDatas, propertyDatas, signalDatas, enums, constants);
         }
 
-        private static Dictionary<string, List<MethodData>> ExtractMethods(AssemblyDefinition definition, Type type)
+        private static Dictionary<string, List<MethodData>> ExtractMethods(string godotTypeName, AssemblyDefinition definition, Type type)
         {
             var methodNamesType = type.GetNestedType("MethodName");
 
@@ -175,6 +176,33 @@ namespace GDShrapt.TypesMap
                 {
                     if (loadedString == null)
                         continue;
+
+                    if (loadedString.Length > 1 && !ClassDB.ClassHasMethod(godotTypeName, loadedString) && loadedString.StartsWith('_'))
+                    {
+                        var b = new StringBuilder(loadedString.Length + 4);
+
+                        b.Append(char.ToLowerInvariant(loadedString[1]));
+
+                        for (int i = 2; i < loadedString.Length; i++)
+                        {
+                            if (char.IsUpper(loadedString[i]))
+                            {
+                                b.Append('_');
+                                b.Append(char.ToLowerInvariant(loadedString[i]));
+                            }
+                            else
+                            {
+                                b.Append(char.ToLowerInvariant(loadedString[i]));
+                            }
+                        }
+
+                        loadedString = b.ToString();
+
+                        if (!ClassDB.ClassHasMethod(godotTypeName, loadedString))
+                        {
+                            GD.Print($"Unknown C# godot's method name: '{loadedString}'");
+                        }
+                    }
 
                     methodDatas.Add(loadedString, methods.Where(x => x.Name == operand.Name).Select(x => new MethodData(operand.Name, x)).ToList());
                     loadedString = null;
