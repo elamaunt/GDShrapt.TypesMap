@@ -1,21 +1,48 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>4.3.0.5</AssemblyVersion>
-    <FileVersion>4.3.0.5</FileVersion>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <AssemblyVersion>4.5.1.0</AssemblyVersion>
+    <FileVersion>4.5.1.0</FileVersion>
+    <Version>4.5.1.0</Version>
+
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Version>4.3.0.5</Version>
+    <PackageId>GDShrapt.TypesMap</PackageId>
     <RepositoryUrl>https://github.com/elamaunt/GDShrapt.TypesMap</RepositoryUrl>
-    <PackageTags>GDShrapt;Types;GodotSharp;Map;Bindings;GDScript;Godot</PackageTags>
+    <RepositoryType>git</RepositoryType>
+    <PackageTags>GDShrapt;Types;GodotSharp;Map;Bindings;GDScript;Godot;TypeMapping;StaticAnalysis</PackageTags>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
     <Company>elamaunt</Company>
     <Authors>elamaunt</Authors>
-    <Description>A library that builds map for Godot Engine embedded types to match gdscript names with the names exported to C#
+    <Copyright>Copyright (c) elamaunt 2024-2026</Copyright>
+    <Description>GDScript to C# type mapping library for Godot Engine 4.5.1.
 
-Just call GodotTypeHelper.ExtractTypeDatas() to build a types map from the Godot environment.</Description>
+Part of the GDShrapt project family for GDScript static analysis. Provides comprehensive type metadata that bridges GDScript type names to their C# equivalents in Godot's GodotSharp bindings.
+
+Features:
+- Maps 1700+ Godot types with methods, properties, signals, enums, and constants
+- Three data sources: embedded manifest, external JSON file, or live assembly extraction
+- Works standalone (CLI tools, LSP servers) or inside Godot runtime
+- GDTypeExtractorNode base class for in-editor data extraction
+- Detailed parameter info, return types, and generic type support
+- Metadata tracking with Godot version and extraction timestamp</Description>
+    <PackageReleaseNotes>
+v4.5.1.0:
+- Breaking: All types renamed with GD prefix (GDTypeData, GDMethodData, etc.)
+- Added GDTypeExtractorNode base class for Godot editor extraction
+- Added GDAssemblyMetadata for version and source tracking
+- Three data source methods: FromManifest, FromFile, FromAssembly
+- Updated embedded data for Godot 4.5.1 (1708 types, 120 global methods)
+- Fixed AmbiguousMatchException for GD.Load method
+- Added comprehensive XML documentation
+- Improved naming convention: GDScriptName vs CSharpName prefixes
+    </PackageReleaseNotes>
+    <PackageProjectUrl>https://github.com/elamaunt/GDShrapt.TypesMap</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,12 +54,16 @@ Just call GodotTypeHelper.ExtractTypeDatas() to build a types map from the Godot
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GodotSharp" Version="4.3.0" />
+    <PackageReference Include="GodotSharp" Version="4.5.1" />
     <PackageReference Include="Mono.Cecil" Version="0.11.6" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <None Include="..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+    <None Include="..\..\README.md">
       <Pack>True</Pack>
       <PackagePath></PackagePath>
     </None>
