@@ -206,7 +206,6 @@ This library is part of the **GDShrapt** ecosystem:
 | Package | Description | NuGet |
 |---------|-------------|-------|
 | [GDShrapt.Reader](https://github.com/elamaunt/GDShrapt/tree/main/src/GDShrapt.Reader) | GDScript parser and AST | [![NuGet](https://img.shields.io/nuget/v/GDShrapt.Reader.svg)](https://www.nuget.org/packages/GDShrapt.Reader) |
-| [GDShrapt.Converter](https://github.com/elamaunt/GDShrapt/tree/main/src/GDShrapt.Converter) | GDScript to C# converter | [![NuGet](https://img.shields.io/nuget/v/GDShrapt.Converter.svg)](https://www.nuget.org/packages/GDShrapt.Converter) |
 | **GDShrapt.TypesMap** | Type mapping library | [![NuGet](https://img.shields.io/nuget/v/GDShrapt.TypesMap.svg)](https://www.nuget.org/packages/GDShrapt.TypesMap) |
 
 ## License
