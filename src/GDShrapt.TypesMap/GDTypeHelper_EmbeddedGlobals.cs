@@ -133,8 +133,9 @@ namespace GDShrapt.TypesMap
             methodDatas["angle_difference"] = new List<GDMethodData>() { new GDMethodData("angle_difference", typeof(Mathf).GetMethod(nameof(Mathf.AngleDifference), new Type[] { typeof(double), typeof(double) })!) };
             methodDatas["rotate_toward"] = new List<GDMethodData>() { new GDMethodData("rotate_toward", typeof(Mathf).GetMethod(nameof(Mathf.RotateToward), new Type[] { typeof(double), typeof(double), typeof(double) })!) };
             methodDatas["fmod"] = new List<GDMethodData>() { new GDMethodData("fmod", typeof(Math).GetMethod(nameof(Math.IEEERemainder), new Type[] { typeof(double), typeof(double) })!) };
-            // Note: str() in GDScript converts arguments to string - maps to object.ToString() or string concatenation
-            methodDatas["str"] = new List<GDMethodData>() { new GDMethodData("str", typeof(object).GetMethod(nameof(object.ToString), Type.EmptyTypes)!) };
+            // Note: str() in GDScript converts arguments to string - uses same varargs signature as print()
+            // GD.Print has params object[] which properly sets IsParams=true
+            methodDatas["str"] = new List<GDMethodData>() { new GDMethodData("str", typeof(GD).GetMethod(nameof(GD.Print), new Type[] { typeof(object[]) })!) };
             // Note: type_string() returns the string name of a Variant type
             methodDatas["type_string"] = new List<GDMethodData>() { new GDMethodData("type_string", typeof(Enum).GetMethod(nameof(Enum.ToString), Type.EmptyTypes)!) };
         }
@@ -170,16 +171,27 @@ namespace GDShrapt.TypesMap
             typeDatas["signal"] = new GDGlobalTypeProxyInfo(typeof(Signal));
             typeDatas["dictionary"] = new GDGlobalTypeProxyInfo(typeof(GodotDictionary));
             typeDatas["array"] = new GDGlobalTypeProxyInfo(typeof(GodotArray));
+            // PackedArray types - add both lowercase (GDScript type) and PascalCase (constructor name)
             typeDatas["packedbytearray"] = new GDGlobalTypeProxyInfo(typeof(List<byte>));
+            typeDatas["PackedByteArray"] = new GDGlobalTypeProxyInfo(typeof(List<byte>));
             typeDatas["packedint32array"] = new GDGlobalTypeProxyInfo(typeof(List<int>));
+            typeDatas["PackedInt32Array"] = new GDGlobalTypeProxyInfo(typeof(List<int>));
             typeDatas["packedint64array"] = new GDGlobalTypeProxyInfo(typeof(List<long>));
+            typeDatas["PackedInt64Array"] = new GDGlobalTypeProxyInfo(typeof(List<long>));
             typeDatas["packedfloat32array"] = new GDGlobalTypeProxyInfo(typeof(List<float>));
+            typeDatas["PackedFloat32Array"] = new GDGlobalTypeProxyInfo(typeof(List<float>));
             typeDatas["packedfloat64array"] = new GDGlobalTypeProxyInfo(typeof(List<double>));
+            typeDatas["PackedFloat64Array"] = new GDGlobalTypeProxyInfo(typeof(List<double>));
             typeDatas["packedstringarray"] = new GDGlobalTypeProxyInfo(typeof(List<string>));
+            typeDatas["PackedStringArray"] = new GDGlobalTypeProxyInfo(typeof(List<string>));
             typeDatas["packedvector2array"] = new GDGlobalTypeProxyInfo(typeof(List<Vector2>));
+            typeDatas["PackedVector2Array"] = new GDGlobalTypeProxyInfo(typeof(List<Vector2>));
             typeDatas["packedvector3array"] = new GDGlobalTypeProxyInfo(typeof(List<Vector3>));
+            typeDatas["PackedVector3Array"] = new GDGlobalTypeProxyInfo(typeof(List<Vector3>));
             typeDatas["packedcolorarray"] = new GDGlobalTypeProxyInfo(typeof(List<Color>));
+            typeDatas["PackedColorArray"] = new GDGlobalTypeProxyInfo(typeof(List<Color>));
             typeDatas["packedvector4array"] = new GDGlobalTypeProxyInfo(typeof(List<Vector4>));
+            typeDatas["PackedVector4Array"] = new GDGlobalTypeProxyInfo(typeof(List<Vector4>));
         }
 
         /// <summary>

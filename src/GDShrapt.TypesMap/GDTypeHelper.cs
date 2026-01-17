@@ -78,6 +78,18 @@ namespace GDShrapt.TypesMap
                 {
                     data.Metadata.Source = "Manifest";
                 }
+
+                // Apply embedded globals to override/extend the loaded data
+                // This ensures runtime code changes take effect without regenerating JSON
+                if (data.GlobalData != null)
+                {
+                    AddEmbeddedGlobalEnums(data.GlobalData.Enums);
+                    AddEmbeddedGlobalMethods(data.GlobalData.MethodDatas);
+                    AddEmbeddedGlobalConstants(data.GlobalData.Constants);
+                    AddEmbeddedGlobalTypes(data.GlobalData.GlobalTypes);
+                    AddEmbeddedGDScriptMethods(data.GlobalData.MethodDatas);
+                    data.GlobalData.BuildEnumsConstants();
+                }
             }
 
             return data;

@@ -162,7 +162,18 @@ namespace GDShrapt.TypesMap
         {
             if (type == typeof(void)) return "void";
             if (type == typeof(bool)) return "bool";
-            if (type == typeof(int) || type == typeof(long) || type == typeof(Int32) || type == typeof(Int64)) return "int";
+
+            // Unsigned integers → int in GDScript
+            if (type == typeof(uint) || type == typeof(UInt32) ||
+                type == typeof(ulong) || type == typeof(UInt64) ||
+                type == typeof(ushort) || type == typeof(UInt16) ||
+                type == typeof(byte) || type == typeof(sbyte))
+                return "int";
+
+            if (type == typeof(int) || type == typeof(long) || type == typeof(Int32) || type == typeof(Int64) ||
+                type == typeof(short) || type == typeof(Int16))
+                return "int";
+
             if (type == typeof(float) || type == typeof(double) || type == typeof(Single) || type == typeof(Double)) return "float";
             if (type == typeof(string) || type == typeof(String)) return "String";
 
