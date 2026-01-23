@@ -1,24 +1,29 @@
 # GDShrapt.TypesMap
 
-[![NuGet](https://img.shields.io/nuget/v/GDShrapt.TypesMap.svg)](https://www.nuget.org/packages/GDShrapt.TypesMap)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Godot](https://img.shields.io/badge/Godot-4.5.1-478CBF?logo=godot-engine&logoColor=white)](https://godotengine.org/)
-[![.NET](https://img.shields.io/badge/.NET-6.0%20%7C%208.0-512BD4?logo=dotnet&logoColor=white)](https://dotnet.microsoft.com/)
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support%20GDShrapt-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/elamaunt)
+<!-- Badges -->
+<p align="center">
+  <a href="https://www.nuget.org/packages/GDShrapt.TypesMap"><img src="https://img.shields.io/nuget/v/GDShrapt.TypesMap.svg" alt="NuGet" /></a>
+  <img src="https://img.shields.io/badge/Godot-4.5.1-478CBF?logo=godot-engine&logoColor=white" alt="Godot" />
+  <img src="https://img.shields.io/badge/.NET-6.0%20%7C%208.0-512BD4?logo=dotnet&logoColor=white" alt=".NET" />
+  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License" /></a>
+</p>
 
-A GDScript to C# type mapping library for Godot Engine. Part of the [GDShrapt](https://github.com/elamaunt/GDShrapt) project family for GDScript static analysis.
+Godot built-in type metadata library for GDScript static analysis.
 
-## Overview
+GDShrapt.TypesMap provides comprehensive mapping between GDScript type names and their C# equivalents in Godot's GodotSharp bindings. It extracts and exposes metadata about classes, methods, properties, signals, enums, and constants — enabling type resolution, code completion, and semantic analysis without requiring the Godot runtime.
 
-GDShrapt.TypesMap provides comprehensive type metadata that bridges GDScript type names to their C# equivalents in Godot's GodotSharp bindings. It extracts and exposes information about:
+This library is a **submodule** of the [GDShrapt](https://github.com/elamaunt/GDShrapt) language intelligence platform.
 
-- **Types** - Class names, inheritance, namespaces
-- **Methods** - GDScript to C# name mapping, parameters, return types, overloads
-- **Properties** - Property names, types, read/write capabilities
-- **Signals** - Signal names and delegate information
-- **Enums** - Enum values and constant mappings
-- **Constants** - Global constants like PI, TAU, INF
-- **Metadata** - Godot version, data format version, extraction timestamp
+---
+
+## What It Provides
+
+- **Type mappings** — GDScript to C# class name resolution
+- **Method signatures** — Parameters, return types, overloads
+- **Properties** — Types, read/write capabilities
+- **Signals** — Event names and delegate information
+- **Enums and constants** — Global and per-type values
+- **Metadata** — Godot version, extraction timestamp
 
 ### Statistics (Godot 4.5.1)
 
@@ -29,64 +34,45 @@ GDShrapt.TypesMap provides comprehensive type metadata that bridges GDScript typ
 | Global Enums | 21 |
 | Global Constants | 4 |
 
+---
+
 ## Installation
 
 ```bash
 dotnet add package GDShrapt.TypesMap
 ```
 
-Or add to your `.csproj`:
+---
 
-```xml
-<PackageReference Include="GDShrapt.TypesMap" Version="4.5.1.0" />
-```
+## Versioning
+
+Package version follows GodotSharp versioning: `{GodotSharp version}.{patch}`
+
+| Version | Meaning |
+|---------|---------|
+| `4.5.1.0` | GodotSharp 4.5.1, initial release |
+| `4.5.1.1` | GodotSharp 4.5.1, patch 1 |
+| `4.6.0.0` | GodotSharp 4.6.0, initial release |
+
+The first three numbers match the target GodotSharp version. The fourth number is the library patch version.
+
+---
 
 ## Usage
 
-### Three Data Sources
+### Data Sources
 
 ```csharp
 using GDShrapt.TypesMap;
 
-// 1. Load from embedded manifest (recommended for standalone/CLI)
-// Works without Godot runtime - ideal for CLI tools and LSP servers
+// Load from embedded manifest (recommended — works without Godot runtime)
 var data = GDTypeHelper.ExtractTypeDatasFromManifest();
 
-// 2. Load from external JSON file
+// Load from external JSON file
 var data = GDTypeHelper.ExtractTypeDatasFromFile("path/to/AssemblyData.json");
 
-// 3. Extract from GodotSharp assembly at runtime (requires Godot)
+// Extract from GodotSharp assembly at runtime (requires Godot)
 var data = GDTypeHelper.ExtractTypeDatasFromAssembly();
-```
-
-### Save Extracted Data
-
-```csharp
-// Save to specific path
-GDTypeHelper.SaveAssemblyDataToFile(data, "path/to/save.json");
-
-// Save to default location (next to executing assembly)
-GDTypeHelper.SaveAssemblyDataToFile(data);
-```
-
-### In-Editor Extraction with Godot Node
-
-```csharp
-using Godot;
-using GDShrapt.TypesMap;
-
-[Tool]
-public partial class MyTypeExtractor : GDTypeExtractorNode
-{
-    public override void _Ready()
-    {
-        if (Engine.IsEditorHint())
-        {
-            OutputPath = "res://data/AssemblyData.json";
-            ExtractAndSave();
-        }
-    }
-}
 ```
 
 ### Working with Data
@@ -94,130 +80,91 @@ public partial class MyTypeExtractor : GDTypeExtractorNode
 ```csharp
 var data = GDTypeHelper.ExtractTypeDatasFromManifest();
 
-// Check metadata
-Console.WriteLine($"Godot version: {data?.Metadata?.GodotVersion}");
-Console.WriteLine($"Source: {data?.Metadata?.Source}");
+// Metadata
+Console.WriteLine($"Godot: {data?.Metadata?.GodotVersion}");
 
-// Access global methods
-if (data?.GlobalData?.MethodDatas.TryGetValue("print", out var printMethods))
+// Global methods
+if (data?.GlobalData?.MethodDatas.TryGetValue("print", out var methods))
+    Console.WriteLine($"print -> {methods.First().CSharpName}");
+
+// Type properties
+if (data?.TypeDatas.TryGetValue("Node2D", out var versions))
 {
-    foreach (var method in printMethods)
-    {
-        Console.WriteLine($"print -> {method.CSharpName}");
-    }
-}
-
-// Access global constants
-var pi = data?.GlobalData?.Constants["PI"];
-Console.WriteLine($"PI constant: {pi?.Value}");
-
-// Access type data
-if (data?.TypeDatas.TryGetValue("Node2D", out var node2dVersions))
-{
-    var node2d = node2dVersions.Values.First();
-
-    // Get properties
-    var position = node2d.PropertyDatas?["position"];
-    Console.WriteLine($"position -> {position?.CSharpName} ({position?.CSharpTypeName})");
+    var node2d = versions.Values.First();
+    var pos = node2d.PropertyDatas?["position"];
+    Console.WriteLine($"position -> {pos?.CSharpName}");
 }
 ```
+
+---
 
 ## Data Model
 
 ```
 GDAssemblyData
-├── Metadata                     # Version and source info
-│   ├── GodotVersion             # e.g., "4.5.1"
-│   ├── DataFormatVersion        # For compatibility (currently 1)
-│   ├── ExtractedAt              # UTC timestamp
-│   ├── Source                   # "Assembly", "File", or "Manifest"
-│   └── SourcePath               # File path (when Source is "File")
-├── GlobalData                   # Global scope data
-│   ├── MethodDatas              # Global methods (print, lerp, abs, etc.)
-│   ├── PropertyDatas            # Global properties
-│   ├── Constants                # Global constants (PI, TAU, INF, NAN)
-│   ├── Enums                    # Global enums (Error, Key, etc.)
-│   └── GlobalTypes              # Built-in types (int, float, Vector2, etc.)
-└── TypeDatas                    # Per-type data indexed by GDScript name
+├── Metadata          Version info, source, timestamp
+├── GlobalData        Global scope (methods, constants, enums)
+└── TypeDatas         Per-type metadata indexed by GDScript name
     └── GDTypeData
-        ├── MethodDatas          # Methods with GDScript→C# name mapping
-        ├── PropertyDatas        # Properties with type info
-        ├── SignalDatas          # Signals with delegate info
-        ├── Enums                # Nested enums
-        └── Constants            # Type constants
+        ├── MethodDatas
+        ├── PropertyDatas
+        ├── SignalDatas
+        ├── Enums
+        └── Constants
 ```
 
-## Key Types
-
-| Type | Description |
-|------|-------------|
-| `GDTypeHelper` | Main entry point - extraction and save methods |
-| `GDTypeExtractorNode` | Base Node class for Godot editor extraction |
-| `GDAssemblyData` | Root container with metadata |
-| `GDAssemblyMetadata` | Version and source information |
-| `GDGlobalData` | Global scope metadata |
-| `GDTypeData` | Per-class type metadata |
-| `GDMethodData` | Method signature with parameters |
-| `GDPropertyData` | Property information with types |
-| `GDSignalData` | Signal/event information |
-| `GDParameterInfo` | Detailed parameter metadata |
-| `GDEnumTypeInfo` | Enum value mappings |
-| `GDConstantInfo` | Constant metadata |
-| `GDGlobalTypeProxyInfo` | Built-in type proxies |
-
-## Naming Convention
-
-Properties use clear prefixes to distinguish GDScript vs C# names:
-- `GDScriptName`, `GDScriptTypeName` - GDScript identifiers (snake_case)
-- `CSharpName`, `CSharpTypeName`, `CSharpTypeFullName` - C# identifiers (PascalCase)
-
-## Compatibility
-
-- **Godot**: 4.5.1
-- **.NET**: 6.0, 8.0
-- **Dependencies**: GodotSharp 4.5.1, Mono.Cecil 0.11.6
+---
 
 ## Integration with GDShrapt
 
-This library is designed to work with:
+TypesMap provides the runtime type information layer for the GDShrapt semantic engine:
 
-- **GDShrapt.Reader** - GDScript parser and AST
-- **GDShrapt.Validator** - Type inference and validation (uses `IGDRuntimeProvider`)
-- **GDShrapt.Formatter** - Auto type hints generation
-
-Example integration with validator:
-
-```csharp
-// Create runtime provider backed by TypesMap data
-var assemblyData = GDTypeHelper.ExtractTypeDatasFromManifest();
-var runtimeProvider = new CustomRuntimeProvider(assemblyData);
-
-// Use with GDShrapt.Validator
-var options = new GDValidationOptions
-{
-    RuntimeProvider = runtimeProvider
-};
+```
+┌─────────────────────────────────────────────────────┐
+│                 GDShrapt.Semantics                  │
+│     Project Model · Type Inference · Refactoring    │
+├─────────────────────────────────────┬───────────────┤
+│         GDShrapt.Abstractions       │  TypesMap     │
+│    Validator · Linter · Formatter   │  (this lib)   │
+├─────────────────────────────────────┴───────────────┤
+│                  GDShrapt.Reader                    │
+│               Parser · AST · Tokens                 │
+└─────────────────────────────────────────────────────┘
 ```
 
-## Related Projects
+---
 
-This library is part of the **GDShrapt** ecosystem:
+## Regenerating Type Data
 
-| Package | Description | NuGet |
-|---------|-------------|-------|
-| [GDShrapt.Reader](https://github.com/elamaunt/GDShrapt/tree/main/src/GDShrapt.Reader) | GDScript parser and AST | [![NuGet](https://img.shields.io/nuget/v/GDShrapt.Reader.svg)](https://www.nuget.org/packages/GDShrapt.Reader) |
-| **GDShrapt.TypesMap** | Type mapping library | [![NuGet](https://img.shields.io/nuget/v/GDShrapt.TypesMap.svg)](https://www.nuget.org/packages/GDShrapt.TypesMap) |
+The embedded `AssemblyData.json` can be regenerated for different Godot versions:
+
+1. Open `src/GDShrapt.TypesMap.Extractor/` in Godot Editor
+2. Build C# solution (Alt+B)
+3. Run the project (F5)
+4. JSON is saved to `src/GDShrapt.TypesMap/Files/AssemblyData.json`
+
+---
+
+## Dependencies
+
+- **GodotSharp** 4.5.1
+- **Mono.Cecil** 0.11.6
+
+---
+
+## Related
+
+| Package | Description |
+|---------|-------------|
+| [GDShrapt](https://github.com/elamaunt/GDShrapt) | Language intelligence platform |
+| [GDShrapt.Reader](https://www.nuget.org/packages/GDShrapt.Reader) | GDScript parser and AST |
+
+---
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+MIT License — see [LICENSE](LICENSE) for details.
 
 ## Author
 
 [elamaunt](https://github.com/elamaunt)
-
-## Links
-
-- [GDShrapt](https://github.com/elamaunt/GDShrapt) - Main repository with parser and converter
-- [NuGet Package](https://www.nuget.org/packages/GDShrapt.TypesMap)
-- [Issues](https://github.com/elamaunt/GDShrapt.TypesMap/issues) - Report bugs or request features
