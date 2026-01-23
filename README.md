@@ -44,6 +44,20 @@ dotnet add package GDShrapt.TypesMap
 
 ---
 
+## Versioning
+
+Package version follows GodotSharp versioning: `{GodotSharp version}.{patch}`
+
+| Version | Meaning |
+|---------|---------|
+| `4.5.1.0` | GodotSharp 4.5.1, initial release |
+| `4.5.1.1` | GodotSharp 4.5.1, patch 1 |
+| `4.6.0.0` | GodotSharp 4.6.0, initial release |
+
+The first three numbers match the target GodotSharp version. The fourth number is the library patch version.
+
+---
+
 ## Usage
 
 ### Data Sources
