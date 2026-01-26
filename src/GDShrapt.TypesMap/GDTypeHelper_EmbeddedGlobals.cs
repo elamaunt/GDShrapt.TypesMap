@@ -1618,7 +1618,7 @@ namespace GDShrapt.TypesMap
                 ["back"] = new() { CreateMethod("back", "Variant") },
                 ["clear"] = new() { CreateMethod("clear", "void") },
                 ["count"] = new() { CreateMethod("count", "int", ("value", "Variant")) },
-                ["duplicate"] = new() { CreateMethod("duplicate", "Array", ("deep", "bool")) },
+                ["duplicate"] = new() { CreateMethodWithDefaults("duplicate", "Array", ("deep", "bool", true)) },
                 ["erase"] = new() { CreateMethod("erase", "void", ("value", "Variant")) },
                 ["fill"] = new() { CreateMethod("fill", "void", ("value", "Variant")) },
                 ["filter"] = new() { CreateMethod("filter", "Array", ("method", "Callable")) },
@@ -1646,7 +1646,7 @@ namespace GDShrapt.TypesMap
                 ["rfind"] = new() { CreateMethod("rfind", "int", ("what", "Variant"), ("from", "int")) },
                 ["shuffle"] = new() { CreateMethod("shuffle", "void") },
                 ["size"] = new() { CreateMethod("size", "int") },
-                ["slice"] = new() { CreateMethod("slice", "Array", ("begin", "int"), ("end", "int"), ("step", "int"), ("deep", "bool")) },
+                ["slice"] = new() { CreateMethodWithDefaults("slice", "Array", ("begin", "int", true), ("end", "int", true), ("step", "int", true), ("deep", "bool", true)) },
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["sort_custom"] = new() { CreateMethod("sort_custom", "void", ("func", "Callable")) },
             }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
@@ -1655,7 +1655,7 @@ namespace GDShrapt.TypesMap
             AddBuiltinType(typeDatas, "Dictionary", typeof(GodotDictionary), new Dictionary<string, List<GDMethodData>>
             {
                 ["clear"] = new() { CreateMethod("clear", "void") },
-                ["duplicate"] = new() { CreateMethod("duplicate", "Dictionary", ("deep", "bool")) },
+                ["duplicate"] = new() { CreateMethodWithDefaults("duplicate", "Dictionary", ("deep", "bool", true)) },
                 ["erase"] = new() { CreateMethod("erase", "bool", ("key", "Variant")) },
                 ["find_key"] = new() { CreateMethod("find_key", "Variant", ("value", "Variant")) },
                 ["get"] = new() { CreateMethod("get", "Variant", ("key", "Variant"), ("default", "Variant")) },
@@ -2327,6 +2327,35 @@ namespace GDShrapt.TypesMap
                         IsParams = true
                     }
                 }
+            };
+        }
+
+        /// <summary>
+        /// Creates a method with optional parameters (parameters that have default values).
+        /// </summary>
+        /// <param name="name">Method name</param>
+        /// <param name="returnType">Return type</param>
+        /// <param name="parameters">Tuple of (name, type, hasDefault) for each parameter</param>
+        private static GDMethodData CreateMethodWithDefaults(string name, string returnType, params (string name, string type, bool hasDefault)[] parameters)
+        {
+            return new GDMethodData
+            {
+                GDScriptName = name,
+                CSharpName = ToPascalCase(name),
+                GDScriptReturnTypeName = returnType,
+                CSharpReturnTypeName = MapGDScriptTypeToCSharp(returnType),
+                ReturnsVoid = returnType == "void",
+                IsStatic = false,
+                GDScriptParameterTypeNames = parameters.Select(p => p.type).ToArray(),
+                CSharpParameterTypeNames = parameters.Select(p => MapGDScriptTypeToCSharp(p.type)).ToArray(),
+                Parameters = parameters.Select((p, i) => new GDParameterInfo
+                {
+                    CSharpName = ToPascalCase(p.name),
+                    GDScriptTypeName = p.type,
+                    CSharpTypeName = MapGDScriptTypeToCSharp(p.type),
+                    Position = i,
+                    HasDefaultValue = p.hasDefault
+                }).ToArray()
             };
         }
 
