@@ -1978,6 +1978,7 @@ namespace GDShrapt.TypesMap
                 ["basis_xform"] = new() { CreateMethod("basis_xform", "Vector2", ("v", "Vector2")) },
                 ["basis_xform_inv"] = new() { CreateMethod("basis_xform_inv", "Vector2", ("v", "Vector2")) },
                 ["determinant"] = new() { CreateMethod("determinant", "float") },
+                ["get_origin"] = new() { CreateMethod("get_origin", "Vector2") },
                 ["get_rotation"] = new() { CreateMethod("get_rotation", "float") },
                 ["get_scale"] = new() { CreateMethod("get_scale", "Vector2") },
                 ["get_skew"] = new() { CreateMethod("get_skew", "float") },
@@ -2121,6 +2122,7 @@ namespace GDShrapt.TypesMap
                 ["z"] = CreateProperty("z", "float"),
                 ["d"] = CreateProperty("d", "float"),
                 ["normal"] = CreateProperty("normal", "Vector3"),
+                ["center"] = CreateProperty("center", "Vector3"),
             }, new Dictionary<string, GDConstantInfo>
             {
                 ["PLANE_XY"] = CreateConstant("PLANE_XY", "Plane"),
