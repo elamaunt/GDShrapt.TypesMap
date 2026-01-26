@@ -90,6 +90,12 @@ namespace GDShrapt.TypesMap
                     AddEmbeddedGDScriptMethods(data.GlobalData.MethodDatas);
                     data.GlobalData.BuildEnumsConstants();
                 }
+
+                // Add builtin types (Vector2, Color, Array, etc.) with their methods
+                if (data.TypeDatas != null)
+                {
+                    AddEmbeddedBuiltinTypes(data.TypeDatas);
+                }
             }
 
             return data;
@@ -218,6 +224,9 @@ namespace GDShrapt.TypesMap
 
                 dict.Add(t.FullName!, ExtractTypeData(globalData, name, definition, t, unresolvedBundle, manualMappedGlobalTypes));
             }
+
+            // Add builtin types (Vector2, Color, Array, etc.) with their methods
+            AddEmbeddedBuiltinTypes(typeDatas);
 
             globalData.BuildEnumsConstants();
 

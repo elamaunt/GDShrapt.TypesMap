@@ -1417,5 +1417,978 @@ namespace GDShrapt.TypesMap
                    GodotObject.ConnectFlags.ReferenceCounted,
              }));
         }
+
+        /// <summary>
+        /// Adds builtin types (Vector2, Color, Array, etc.) with their methods to TypeDatas.
+        /// These types are value types in Godot and have methods but are not classes.
+        /// </summary>
+        internal static void AddEmbeddedBuiltinTypes(Dictionary<string, Dictionary<string, GDTypeData>> typeDatas)
+        {
+            // Vector2
+            AddBuiltinType(typeDatas, "Vector2", typeof(Vector2), new Dictionary<string, List<GDMethodData>>
+            {
+                ["abs"] = new() { CreateMethod("abs", "Vector2") },
+                ["angle"] = new() { CreateMethod("angle", "float") },
+                ["angle_to"] = new() { CreateMethod("angle_to", "float", ("to", "Vector2")) },
+                ["angle_to_point"] = new() { CreateMethod("angle_to_point", "float", ("point", "Vector2")) },
+                ["aspect"] = new() { CreateMethod("aspect", "float") },
+                ["bounce"] = new() { CreateMethod("bounce", "Vector2", ("n", "Vector2")) },
+                ["ceil"] = new() { CreateMethod("ceil", "Vector2") },
+                ["clamp"] = new() { CreateMethod("clamp", "Vector2", ("min", "Vector2"), ("max", "Vector2")) },
+                ["cross"] = new() { CreateMethod("cross", "float", ("with", "Vector2")) },
+                ["direction_to"] = new() { CreateMethod("direction_to", "Vector2", ("to", "Vector2")) },
+                ["distance_squared_to"] = new() { CreateMethod("distance_squared_to", "float", ("to", "Vector2")) },
+                ["distance_to"] = new() { CreateMethod("distance_to", "float", ("to", "Vector2")) },
+                ["dot"] = new() { CreateMethod("dot", "float", ("with", "Vector2")) },
+                ["floor"] = new() { CreateMethod("floor", "Vector2") },
+                ["from_angle"] = new() { CreateMethod("from_angle", "Vector2", true, ("angle", "float")) },
+                ["is_equal_approx"] = new() { CreateMethod("is_equal_approx", "bool", ("to", "Vector2")) },
+                ["is_finite"] = new() { CreateMethod("is_finite", "bool") },
+                ["is_normalized"] = new() { CreateMethod("is_normalized", "bool") },
+                ["is_zero_approx"] = new() { CreateMethod("is_zero_approx", "bool") },
+                ["length"] = new() { CreateMethod("length", "float") },
+                ["length_squared"] = new() { CreateMethod("length_squared", "float") },
+                ["lerp"] = new() { CreateMethod("lerp", "Vector2", ("to", "Vector2"), ("weight", "float")) },
+                ["limit_length"] = new() { CreateMethod("limit_length", "Vector2", ("length", "float")) },
+                ["max_axis_index"] = new() { CreateMethod("max_axis_index", "int") },
+                ["min_axis_index"] = new() { CreateMethod("min_axis_index", "int") },
+                ["move_toward"] = new() { CreateMethod("move_toward", "Vector2", ("to", "Vector2"), ("delta", "float")) },
+                ["normalized"] = new() { CreateMethod("normalized", "Vector2") },
+                ["orthogonal"] = new() { CreateMethod("orthogonal", "Vector2") },
+                ["posmod"] = new() { CreateMethod("posmod", "Vector2", ("mod", "float")) },
+                ["posmodv"] = new() { CreateMethod("posmodv", "Vector2", ("modv", "Vector2")) },
+                ["project"] = new() { CreateMethod("project", "Vector2", ("b", "Vector2")) },
+                ["reflect"] = new() { CreateMethod("reflect", "Vector2", ("n", "Vector2")) },
+                ["rotated"] = new() { CreateMethod("rotated", "Vector2", ("angle", "float")) },
+                ["round"] = new() { CreateMethod("round", "Vector2") },
+                ["sign"] = new() { CreateMethod("sign", "Vector2") },
+                ["slerp"] = new() { CreateMethod("slerp", "Vector2", ("to", "Vector2"), ("weight", "float")) },
+                ["slide"] = new() { CreateMethod("slide", "Vector2", ("n", "Vector2")) },
+                ["snapped"] = new() { CreateMethod("snapped", "Vector2", ("step", "Vector2")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["x"] = CreateProperty("x", "float"),
+                ["y"] = CreateProperty("y", "float"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["ZERO"] = CreateConstant("ZERO", "Vector2"),
+                ["ONE"] = CreateConstant("ONE", "Vector2"),
+                ["INF"] = CreateConstant("INF", "Vector2"),
+                ["LEFT"] = CreateConstant("LEFT", "Vector2"),
+                ["RIGHT"] = CreateConstant("RIGHT", "Vector2"),
+                ["UP"] = CreateConstant("UP", "Vector2"),
+                ["DOWN"] = CreateConstant("DOWN", "Vector2"),
+            });
+
+            // Vector3
+            AddBuiltinType(typeDatas, "Vector3", typeof(Vector3), new Dictionary<string, List<GDMethodData>>
+            {
+                ["abs"] = new() { CreateMethod("abs", "Vector3") },
+                ["angle_to"] = new() { CreateMethod("angle_to", "float", ("to", "Vector3")) },
+                ["bounce"] = new() { CreateMethod("bounce", "Vector3", ("n", "Vector3")) },
+                ["ceil"] = new() { CreateMethod("ceil", "Vector3") },
+                ["clamp"] = new() { CreateMethod("clamp", "Vector3", ("min", "Vector3"), ("max", "Vector3")) },
+                ["cross"] = new() { CreateMethod("cross", "Vector3", ("with", "Vector3")) },
+                ["direction_to"] = new() { CreateMethod("direction_to", "Vector3", ("to", "Vector3")) },
+                ["distance_squared_to"] = new() { CreateMethod("distance_squared_to", "float", ("to", "Vector3")) },
+                ["distance_to"] = new() { CreateMethod("distance_to", "float", ("to", "Vector3")) },
+                ["dot"] = new() { CreateMethod("dot", "float", ("with", "Vector3")) },
+                ["floor"] = new() { CreateMethod("floor", "Vector3") },
+                ["inverse"] = new() { CreateMethod("inverse", "Vector3") },
+                ["is_equal_approx"] = new() { CreateMethod("is_equal_approx", "bool", ("to", "Vector3")) },
+                ["is_finite"] = new() { CreateMethod("is_finite", "bool") },
+                ["is_normalized"] = new() { CreateMethod("is_normalized", "bool") },
+                ["is_zero_approx"] = new() { CreateMethod("is_zero_approx", "bool") },
+                ["length"] = new() { CreateMethod("length", "float") },
+                ["length_squared"] = new() { CreateMethod("length_squared", "float") },
+                ["lerp"] = new() { CreateMethod("lerp", "Vector3", ("to", "Vector3"), ("weight", "float")) },
+                ["limit_length"] = new() { CreateMethod("limit_length", "Vector3", ("length", "float")) },
+                ["max_axis_index"] = new() { CreateMethod("max_axis_index", "int") },
+                ["min_axis_index"] = new() { CreateMethod("min_axis_index", "int") },
+                ["move_toward"] = new() { CreateMethod("move_toward", "Vector3", ("to", "Vector3"), ("delta", "float")) },
+                ["normalized"] = new() { CreateMethod("normalized", "Vector3") },
+                ["posmod"] = new() { CreateMethod("posmod", "Vector3", ("mod", "float")) },
+                ["posmodv"] = new() { CreateMethod("posmodv", "Vector3", ("modv", "Vector3")) },
+                ["project"] = new() { CreateMethod("project", "Vector3", ("b", "Vector3")) },
+                ["reflect"] = new() { CreateMethod("reflect", "Vector3", ("n", "Vector3")) },
+                ["rotated"] = new() { CreateMethod("rotated", "Vector3", ("axis", "Vector3"), ("angle", "float")) },
+                ["round"] = new() { CreateMethod("round", "Vector3") },
+                ["sign"] = new() { CreateMethod("sign", "Vector3") },
+                ["signed_angle_to"] = new() { CreateMethod("signed_angle_to", "float", ("to", "Vector3"), ("axis", "Vector3")) },
+                ["slerp"] = new() { CreateMethod("slerp", "Vector3", ("to", "Vector3"), ("weight", "float")) },
+                ["slide"] = new() { CreateMethod("slide", "Vector3", ("n", "Vector3")) },
+                ["snapped"] = new() { CreateMethod("snapped", "Vector3", ("step", "Vector3")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["x"] = CreateProperty("x", "float"),
+                ["y"] = CreateProperty("y", "float"),
+                ["z"] = CreateProperty("z", "float"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["ZERO"] = CreateConstant("ZERO", "Vector3"),
+                ["ONE"] = CreateConstant("ONE", "Vector3"),
+                ["INF"] = CreateConstant("INF", "Vector3"),
+                ["LEFT"] = CreateConstant("LEFT", "Vector3"),
+                ["RIGHT"] = CreateConstant("RIGHT", "Vector3"),
+                ["UP"] = CreateConstant("UP", "Vector3"),
+                ["DOWN"] = CreateConstant("DOWN", "Vector3"),
+                ["FORWARD"] = CreateConstant("FORWARD", "Vector3"),
+                ["BACK"] = CreateConstant("BACK", "Vector3"),
+            });
+
+            // Color
+            AddBuiltinType(typeDatas, "Color", typeof(Color), new Dictionary<string, List<GDMethodData>>
+            {
+                ["blend"] = new() { CreateMethod("blend", "Color", ("over", "Color")) },
+                ["clamp"] = new() { CreateMethod("clamp", "Color", ("min", "Color"), ("max", "Color")) },
+                ["darkened"] = new() { CreateMethod("darkened", "Color", ("amount", "float")) },
+                ["from_hsv"] = new() { CreateMethod("from_hsv", "Color", true, ("h", "float"), ("s", "float"), ("v", "float"), ("alpha", "float")) },
+                ["from_ok_hsl"] = new() { CreateMethod("from_ok_hsl", "Color", true, ("h", "float"), ("s", "float"), ("l", "float"), ("alpha", "float")) },
+                ["from_rgbe9995"] = new() { CreateMethod("from_rgbe9995", "Color", true, ("rgbe", "int")) },
+                ["from_string"] = new() { CreateMethod("from_string", "Color", true, ("str", "String"), ("default", "Color")) },
+                ["get_luminance"] = new() { CreateMethod("get_luminance", "float") },
+                ["hex"] = new() { CreateMethod("hex", "Color", true, ("hex", "int")) },
+                ["hex64"] = new() { CreateMethod("hex64", "Color", true, ("hex", "int")) },
+                ["html"] = new() { CreateMethod("html", "Color", true, ("rgba", "String")) },
+                ["html_is_valid"] = new() { CreateMethod("html_is_valid", "bool", true, ("color", "String")) },
+                ["inverted"] = new() { CreateMethod("inverted", "Color") },
+                ["is_equal_approx"] = new() { CreateMethod("is_equal_approx", "bool", ("to", "Color")) },
+                ["lerp"] = new() { CreateMethod("lerp", "Color", ("to", "Color"), ("weight", "float")) },
+                ["lightened"] = new() { CreateMethod("lightened", "Color", ("amount", "float")) },
+                ["linear_to_srgb"] = new() { CreateMethod("linear_to_srgb", "Color") },
+                ["srgb_to_linear"] = new() { CreateMethod("srgb_to_linear", "Color") },
+                ["to_abgr32"] = new() { CreateMethod("to_abgr32", "int") },
+                ["to_abgr64"] = new() { CreateMethod("to_abgr64", "int") },
+                ["to_argb32"] = new() { CreateMethod("to_argb32", "int") },
+                ["to_argb64"] = new() { CreateMethod("to_argb64", "int") },
+                ["to_html"] = new() { CreateMethod("to_html", "String", ("with_alpha", "bool")) },
+                ["to_rgba32"] = new() { CreateMethod("to_rgba32", "int") },
+                ["to_rgba64"] = new() { CreateMethod("to_rgba64", "int") },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["r"] = CreateProperty("r", "float"),
+                ["g"] = CreateProperty("g", "float"),
+                ["b"] = CreateProperty("b", "float"),
+                ["a"] = CreateProperty("a", "float"),
+                ["r8"] = CreateProperty("r8", "int"),
+                ["g8"] = CreateProperty("g8", "int"),
+                ["b8"] = CreateProperty("b8", "int"),
+                ["a8"] = CreateProperty("a8", "int"),
+                ["h"] = CreateProperty("h", "float"),
+                ["s"] = CreateProperty("s", "float"),
+                ["v"] = CreateProperty("v", "float"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["ALICE_BLUE"] = CreateConstant("ALICE_BLUE", "Color"),
+                ["BLACK"] = CreateConstant("BLACK", "Color"),
+                ["BLUE"] = CreateConstant("BLUE", "Color"),
+                ["CYAN"] = CreateConstant("CYAN", "Color"),
+                ["GREEN"] = CreateConstant("GREEN", "Color"),
+                ["GRAY"] = CreateConstant("GRAY", "Color"),
+                ["MAGENTA"] = CreateConstant("MAGENTA", "Color"),
+                ["ORANGE"] = CreateConstant("ORANGE", "Color"),
+                ["PURPLE"] = CreateConstant("PURPLE", "Color"),
+                ["RED"] = CreateConstant("RED", "Color"),
+                ["TRANSPARENT"] = CreateConstant("TRANSPARENT", "Color"),
+                ["WHITE"] = CreateConstant("WHITE", "Color"),
+                ["YELLOW"] = CreateConstant("YELLOW", "Color"),
+            });
+
+            // Signal - special type for signal references
+            AddBuiltinType(typeDatas, "Signal", typeof(Signal), new Dictionary<string, List<GDMethodData>>
+            {
+                ["emit"] = new() { CreateMethodVarargs("emit", "void") },
+                ["connect"] = new() { CreateMethod("connect", "int", ("callable", "Callable"), ("flags", "int")) },
+                ["disconnect"] = new() { CreateMethod("disconnect", "void", ("callable", "Callable")) },
+                ["is_connected"] = new() { CreateMethod("is_connected", "bool", ("callable", "Callable")) },
+                ["get_connections"] = new() { CreateMethod("get_connections", "Array") },
+                ["get_name"] = new() { CreateMethod("get_name", "StringName") },
+                ["get_object"] = new() { CreateMethod("get_object", "Object") },
+                ["get_object_id"] = new() { CreateMethod("get_object_id", "int") },
+                ["is_null"] = new() { CreateMethod("is_null", "bool") },
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+
+            // Array
+            AddBuiltinType(typeDatas, "Array", typeof(GodotArray), new Dictionary<string, List<GDMethodData>>
+            {
+                ["all"] = new() { CreateMethod("all", "bool", ("method", "Callable")) },
+                ["any"] = new() { CreateMethod("any", "bool", ("method", "Callable")) },
+                ["append"] = new() { CreateMethod("append", "void", ("value", "Variant")) },
+                ["append_array"] = new() { CreateMethod("append_array", "void", ("array", "Array")) },
+                ["back"] = new() { CreateMethod("back", "Variant") },
+                ["clear"] = new() { CreateMethod("clear", "void") },
+                ["count"] = new() { CreateMethod("count", "int", ("value", "Variant")) },
+                ["duplicate"] = new() { CreateMethod("duplicate", "Array", ("deep", "bool")) },
+                ["erase"] = new() { CreateMethod("erase", "void", ("value", "Variant")) },
+                ["fill"] = new() { CreateMethod("fill", "void", ("value", "Variant")) },
+                ["filter"] = new() { CreateMethod("filter", "Array", ("method", "Callable")) },
+                ["find"] = new() { CreateMethod("find", "int", ("what", "Variant"), ("from", "int")) },
+                ["front"] = new() { CreateMethod("front", "Variant") },
+                ["has"] = new() { CreateMethod("has", "bool", ("value", "Variant")) },
+                ["hash"] = new() { CreateMethod("hash", "int") },
+                ["insert"] = new() { CreateMethod("insert", "int", ("position", "int"), ("value", "Variant")) },
+                ["is_empty"] = new() { CreateMethod("is_empty", "bool") },
+                ["is_read_only"] = new() { CreateMethod("is_read_only", "bool") },
+                ["is_typed"] = new() { CreateMethod("is_typed", "bool") },
+                ["map"] = new() { CreateMethod("map", "Array", ("method", "Callable")) },
+                ["max"] = new() { CreateMethod("max", "Variant") },
+                ["min"] = new() { CreateMethod("min", "Variant") },
+                ["pick_random"] = new() { CreateMethod("pick_random", "Variant") },
+                ["pop_at"] = new() { CreateMethod("pop_at", "Variant", ("position", "int")) },
+                ["pop_back"] = new() { CreateMethod("pop_back", "Variant") },
+                ["pop_front"] = new() { CreateMethod("pop_front", "Variant") },
+                ["push_back"] = new() { CreateMethod("push_back", "void", ("value", "Variant")) },
+                ["push_front"] = new() { CreateMethod("push_front", "void", ("value", "Variant")) },
+                ["reduce"] = new() { CreateMethod("reduce", "Variant", ("method", "Callable"), ("accum", "Variant")) },
+                ["remove_at"] = new() { CreateMethod("remove_at", "void", ("position", "int")) },
+                ["resize"] = new() { CreateMethod("resize", "int", ("size", "int")) },
+                ["reverse"] = new() { CreateMethod("reverse", "void") },
+                ["rfind"] = new() { CreateMethod("rfind", "int", ("what", "Variant"), ("from", "int")) },
+                ["shuffle"] = new() { CreateMethod("shuffle", "void") },
+                ["size"] = new() { CreateMethod("size", "int") },
+                ["slice"] = new() { CreateMethod("slice", "Array", ("begin", "int"), ("end", "int"), ("step", "int"), ("deep", "bool")) },
+                ["sort"] = new() { CreateMethod("sort", "void") },
+                ["sort_custom"] = new() { CreateMethod("sort_custom", "void", ("func", "Callable")) },
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+
+            // Dictionary
+            AddBuiltinType(typeDatas, "Dictionary", typeof(GodotDictionary), new Dictionary<string, List<GDMethodData>>
+            {
+                ["clear"] = new() { CreateMethod("clear", "void") },
+                ["duplicate"] = new() { CreateMethod("duplicate", "Dictionary", ("deep", "bool")) },
+                ["erase"] = new() { CreateMethod("erase", "bool", ("key", "Variant")) },
+                ["find_key"] = new() { CreateMethod("find_key", "Variant", ("value", "Variant")) },
+                ["get"] = new() { CreateMethod("get", "Variant", ("key", "Variant"), ("default", "Variant")) },
+                ["has"] = new() { CreateMethod("has", "bool", ("key", "Variant")) },
+                ["has_all"] = new() { CreateMethod("has_all", "bool", ("keys", "Array")) },
+                ["hash"] = new() { CreateMethod("hash", "int") },
+                ["is_empty"] = new() { CreateMethod("is_empty", "bool") },
+                ["is_read_only"] = new() { CreateMethod("is_read_only", "bool") },
+                ["keys"] = new() { CreateMethod("keys", "Array") },
+                ["merge"] = new() { CreateMethod("merge", "void", ("dictionary", "Dictionary"), ("overwrite", "bool")) },
+                ["size"] = new() { CreateMethod("size", "int") },
+                ["values"] = new() { CreateMethod("values", "Array") },
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+
+            // String methods (for String type)
+            AddBuiltinType(typeDatas, "String", typeof(string), new Dictionary<string, List<GDMethodData>>
+            {
+                ["begins_with"] = new() { CreateMethod("begins_with", "bool", ("text", "String")) },
+                ["contains"] = new() { CreateMethod("contains", "bool", ("what", "String")) },
+                ["count"] = new() { CreateMethod("count", "int", ("what", "String"), ("from", "int"), ("to", "int")) },
+                ["dedent"] = new() { CreateMethod("dedent", "String") },
+                ["ends_with"] = new() { CreateMethod("ends_with", "bool", ("text", "String")) },
+                ["find"] = new() { CreateMethod("find", "int", ("what", "String"), ("from", "int")) },
+                ["format"] = new() { CreateMethod("format", "String", ("values", "Variant"), ("placeholder", "String")) },
+                ["get_base_dir"] = new() { CreateMethod("get_base_dir", "String") },
+                ["get_basename"] = new() { CreateMethod("get_basename", "String") },
+                ["get_extension"] = new() { CreateMethod("get_extension", "String") },
+                ["get_file"] = new() { CreateMethod("get_file", "String") },
+                ["get_slice"] = new() { CreateMethod("get_slice", "String", ("delimiter", "String"), ("slice", "int")) },
+                ["get_slice_count"] = new() { CreateMethod("get_slice_count", "int", ("delimiter", "String")) },
+                ["hash"] = new() { CreateMethod("hash", "int") },
+                ["indent"] = new() { CreateMethod("indent", "String", ("prefix", "String")) },
+                ["insert"] = new() { CreateMethod("insert", "String", ("position", "int"), ("what", "String")) },
+                ["is_absolute_path"] = new() { CreateMethod("is_absolute_path", "bool") },
+                ["is_empty"] = new() { CreateMethod("is_empty", "bool") },
+                ["is_relative_path"] = new() { CreateMethod("is_relative_path", "bool") },
+                ["is_valid_filename"] = new() { CreateMethod("is_valid_filename", "bool") },
+                ["is_valid_float"] = new() { CreateMethod("is_valid_float", "bool") },
+                ["is_valid_int"] = new() { CreateMethod("is_valid_int", "bool") },
+                ["join"] = new() { CreateMethod("join", "String", ("parts", "PackedStringArray")) },
+                ["left"] = new() { CreateMethod("left", "String", ("length", "int")) },
+                ["length"] = new() { CreateMethod("length", "int") },
+                ["lpad"] = new() { CreateMethod("lpad", "String", ("min_length", "int"), ("character", "String")) },
+                ["lstrip"] = new() { CreateMethod("lstrip", "String", ("chars", "String")) },
+                ["match"] = new() { CreateMethod("match", "bool", ("expr", "String")) },
+                ["md5_text"] = new() { CreateMethod("md5_text", "String") },
+                ["pad_decimals"] = new() { CreateMethod("pad_decimals", "String", ("digits", "int")) },
+                ["pad_zeros"] = new() { CreateMethod("pad_zeros", "String", ("digits", "int")) },
+                ["path_join"] = new() { CreateMethod("path_join", "String", ("file", "String")) },
+                ["repeat"] = new() { CreateMethod("repeat", "String", ("count", "int")) },
+                ["replace"] = new() { CreateMethod("replace", "String", ("what", "String"), ("forwhat", "String")) },
+                ["replacen"] = new() { CreateMethod("replacen", "String", ("what", "String"), ("forwhat", "String")) },
+                ["reverse"] = new() { CreateMethod("reverse", "String") },
+                ["rfind"] = new() { CreateMethod("rfind", "int", ("what", "String"), ("from", "int")) },
+                ["right"] = new() { CreateMethod("right", "String", ("length", "int")) },
+                ["rpad"] = new() { CreateMethod("rpad", "String", ("min_length", "int"), ("character", "String")) },
+                ["rsplit"] = new() { CreateMethod("rsplit", "PackedStringArray", ("delimiter", "String"), ("allow_empty", "bool"), ("maxsplit", "int")) },
+                ["rstrip"] = new() { CreateMethod("rstrip", "String", ("chars", "String")) },
+                ["sha256_text"] = new() { CreateMethod("sha256_text", "String") },
+                ["similarity"] = new() { CreateMethod("similarity", "float", ("text", "String")) },
+                ["simplify_path"] = new() { CreateMethod("simplify_path", "String") },
+                ["split"] = new() { CreateMethod("split", "PackedStringArray", ("delimiter", "String"), ("allow_empty", "bool"), ("maxsplit", "int")) },
+                ["strip_edges"] = new() { CreateMethod("strip_edges", "String", ("left", "bool"), ("right", "bool")) },
+                ["strip_escapes"] = new() { CreateMethod("strip_escapes", "String") },
+                ["substr"] = new() { CreateMethod("substr", "String", ("from", "int"), ("len", "int")) },
+                ["to_camel_case"] = new() { CreateMethod("to_camel_case", "String") },
+                ["to_float"] = new() { CreateMethod("to_float", "float") },
+                ["to_int"] = new() { CreateMethod("to_int", "int") },
+                ["to_lower"] = new() { CreateMethod("to_lower", "String") },
+                ["to_pascal_case"] = new() { CreateMethod("to_pascal_case", "String") },
+                ["to_snake_case"] = new() { CreateMethod("to_snake_case", "String") },
+                ["to_upper"] = new() { CreateMethod("to_upper", "String") },
+                ["trim_prefix"] = new() { CreateMethod("trim_prefix", "String", ("prefix", "String")) },
+                ["trim_suffix"] = new() { CreateMethod("trim_suffix", "String", ("suffix", "String")) },
+                ["uri_decode"] = new() { CreateMethod("uri_decode", "String") },
+                ["uri_encode"] = new() { CreateMethod("uri_encode", "String") },
+                ["validate_filename"] = new() { CreateMethod("validate_filename", "String") },
+                ["validate_node_name"] = new() { CreateMethod("validate_node_name", "String") },
+                ["xml_escape"] = new() { CreateMethod("xml_escape", "String", ("escape_quotes", "bool")) },
+                ["xml_unescape"] = new() { CreateMethod("xml_unescape", "String") },
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+
+            // Callable
+            AddBuiltinType(typeDatas, "Callable", typeof(Callable), new Dictionary<string, List<GDMethodData>>
+            {
+                ["bind"] = new() { CreateMethodVarargs("bind", "Callable") },
+                ["bindv"] = new() { CreateMethod("bindv", "Callable", ("arguments", "Array")) },
+                ["call"] = new() { CreateMethodVarargs("call", "Variant") },
+                ["call_deferred"] = new() { CreateMethodVarargs("call_deferred", "void") },
+                ["callv"] = new() { CreateMethod("callv", "Variant", ("arguments", "Array")) },
+                ["get_argument_count"] = new() { CreateMethod("get_argument_count", "int") },
+                ["get_bound_arguments"] = new() { CreateMethod("get_bound_arguments", "Array") },
+                ["get_bound_arguments_count"] = new() { CreateMethod("get_bound_arguments_count", "int") },
+                ["get_method"] = new() { CreateMethod("get_method", "StringName") },
+                ["get_object"] = new() { CreateMethod("get_object", "Object") },
+                ["get_object_id"] = new() { CreateMethod("get_object_id", "int") },
+                ["hash"] = new() { CreateMethod("hash", "int") },
+                ["is_custom"] = new() { CreateMethod("is_custom", "bool") },
+                ["is_null"] = new() { CreateMethod("is_null", "bool") },
+                ["is_standard"] = new() { CreateMethod("is_standard", "bool") },
+                ["is_valid"] = new() { CreateMethod("is_valid", "bool") },
+                ["rpc"] = new() { CreateMethodVarargs("rpc", "void") },
+                ["rpc_id"] = new() { CreateMethodVarargs("rpc_id", "void") },
+                ["unbind"] = new() { CreateMethod("unbind", "Callable", ("argcount", "int")) },
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+
+            // StringName
+            AddBuiltinType(typeDatas, "StringName", typeof(StringName), new Dictionary<string, List<GDMethodData>>
+            {
+                ["hash"] = new() { CreateMethod("hash", "int") },
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+
+            // NodePath
+            AddBuiltinType(typeDatas, "NodePath", typeof(NodePath), new Dictionary<string, List<GDMethodData>>
+            {
+                ["get_as_property_path"] = new() { CreateMethod("get_as_property_path", "NodePath") },
+                ["get_concatenated_names"] = new() { CreateMethod("get_concatenated_names", "StringName") },
+                ["get_concatenated_subnames"] = new() { CreateMethod("get_concatenated_subnames", "StringName") },
+                ["get_name"] = new() { CreateMethod("get_name", "StringName", ("idx", "int")) },
+                ["get_name_count"] = new() { CreateMethod("get_name_count", "int") },
+                ["get_subname"] = new() { CreateMethod("get_subname", "StringName", ("idx", "int")) },
+                ["get_subname_count"] = new() { CreateMethod("get_subname_count", "int") },
+                ["hash"] = new() { CreateMethod("hash", "int") },
+                ["is_absolute"] = new() { CreateMethod("is_absolute", "bool") },
+                ["is_empty"] = new() { CreateMethod("is_empty", "bool") },
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+
+            // Rect2
+            AddBuiltinType(typeDatas, "Rect2", typeof(Rect2), new Dictionary<string, List<GDMethodData>>
+            {
+                ["abs"] = new() { CreateMethod("abs", "Rect2") },
+                ["encloses"] = new() { CreateMethod("encloses", "bool", ("b", "Rect2")) },
+                ["expand"] = new() { CreateMethod("expand", "Rect2", ("to", "Vector2")) },
+                ["get_area"] = new() { CreateMethod("get_area", "float") },
+                ["get_center"] = new() { CreateMethod("get_center", "Vector2") },
+                ["grow"] = new() { CreateMethod("grow", "Rect2", ("amount", "float")) },
+                ["grow_individual"] = new() { CreateMethod("grow_individual", "Rect2", ("left", "float"), ("top", "float"), ("right", "float"), ("bottom", "float")) },
+                ["grow_side"] = new() { CreateMethod("grow_side", "Rect2", ("side", "int"), ("amount", "float")) },
+                ["has_area"] = new() { CreateMethod("has_area", "bool") },
+                ["has_point"] = new() { CreateMethod("has_point", "bool", ("point", "Vector2")) },
+                ["intersection"] = new() { CreateMethod("intersection", "Rect2", ("b", "Rect2")) },
+                ["intersects"] = new() { CreateMethod("intersects", "bool", ("b", "Rect2"), ("include_borders", "bool")) },
+                ["is_equal_approx"] = new() { CreateMethod("is_equal_approx", "bool", ("rect", "Rect2")) },
+                ["is_finite"] = new() { CreateMethod("is_finite", "bool") },
+                ["merge"] = new() { CreateMethod("merge", "Rect2", ("b", "Rect2")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["position"] = CreateProperty("position", "Vector2"),
+                ["size"] = CreateProperty("size", "Vector2"),
+                ["end"] = CreateProperty("end", "Vector2"),
+            }, new Dictionary<string, GDConstantInfo>());
+
+            // Vector2i
+            AddBuiltinType(typeDatas, "Vector2i", typeof(Vector2I), new Dictionary<string, List<GDMethodData>>
+            {
+                ["abs"] = new() { CreateMethod("abs", "Vector2i") },
+                ["clamp"] = new() { CreateMethod("clamp", "Vector2i", ("min", "Vector2i"), ("max", "Vector2i")) },
+                ["distance_squared_to"] = new() { CreateMethod("distance_squared_to", "int", ("to", "Vector2i")) },
+                ["distance_to"] = new() { CreateMethod("distance_to", "float", ("to", "Vector2i")) },
+                ["length"] = new() { CreateMethod("length", "float") },
+                ["length_squared"] = new() { CreateMethod("length_squared", "int") },
+                ["max"] = new() { CreateMethod("max", "Vector2i", ("with", "Vector2i")) },
+                ["min"] = new() { CreateMethod("min", "Vector2i", ("with", "Vector2i")) },
+                ["sign"] = new() { CreateMethod("sign", "Vector2i") },
+                ["snapped"] = new() { CreateMethod("snapped", "Vector2i", ("step", "Vector2i")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["x"] = CreateProperty("x", "int"),
+                ["y"] = CreateProperty("y", "int"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["ZERO"] = CreateConstant("ZERO", "Vector2i"),
+                ["ONE"] = CreateConstant("ONE", "Vector2i"),
+                ["MIN"] = CreateConstant("MIN", "Vector2i"),
+                ["MAX"] = CreateConstant("MAX", "Vector2i"),
+                ["LEFT"] = CreateConstant("LEFT", "Vector2i"),
+                ["RIGHT"] = CreateConstant("RIGHT", "Vector2i"),
+                ["UP"] = CreateConstant("UP", "Vector2i"),
+                ["DOWN"] = CreateConstant("DOWN", "Vector2i"),
+            });
+
+            // Vector3i
+            AddBuiltinType(typeDatas, "Vector3i", typeof(Vector3I), new Dictionary<string, List<GDMethodData>>
+            {
+                ["abs"] = new() { CreateMethod("abs", "Vector3i") },
+                ["clamp"] = new() { CreateMethod("clamp", "Vector3i", ("min", "Vector3i"), ("max", "Vector3i")) },
+                ["distance_squared_to"] = new() { CreateMethod("distance_squared_to", "int", ("to", "Vector3i")) },
+                ["distance_to"] = new() { CreateMethod("distance_to", "float", ("to", "Vector3i")) },
+                ["length"] = new() { CreateMethod("length", "float") },
+                ["length_squared"] = new() { CreateMethod("length_squared", "int") },
+                ["max"] = new() { CreateMethod("max", "Vector3i", ("with", "Vector3i")) },
+                ["min"] = new() { CreateMethod("min", "Vector3i", ("with", "Vector3i")) },
+                ["sign"] = new() { CreateMethod("sign", "Vector3i") },
+                ["snapped"] = new() { CreateMethod("snapped", "Vector3i", ("step", "Vector3i")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["x"] = CreateProperty("x", "int"),
+                ["y"] = CreateProperty("y", "int"),
+                ["z"] = CreateProperty("z", "int"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["ZERO"] = CreateConstant("ZERO", "Vector3i"),
+                ["ONE"] = CreateConstant("ONE", "Vector3i"),
+                ["MIN"] = CreateConstant("MIN", "Vector3i"),
+                ["MAX"] = CreateConstant("MAX", "Vector3i"),
+                ["LEFT"] = CreateConstant("LEFT", "Vector3i"),
+                ["RIGHT"] = CreateConstant("RIGHT", "Vector3i"),
+                ["UP"] = CreateConstant("UP", "Vector3i"),
+                ["DOWN"] = CreateConstant("DOWN", "Vector3i"),
+                ["FORWARD"] = CreateConstant("FORWARD", "Vector3i"),
+                ["BACK"] = CreateConstant("BACK", "Vector3i"),
+            });
+
+            // Vector4
+            AddBuiltinType(typeDatas, "Vector4", typeof(Vector4), new Dictionary<string, List<GDMethodData>>
+            {
+                ["abs"] = new() { CreateMethod("abs", "Vector4") },
+                ["ceil"] = new() { CreateMethod("ceil", "Vector4") },
+                ["clamp"] = new() { CreateMethod("clamp", "Vector4", ("min", "Vector4"), ("max", "Vector4")) },
+                ["cubic_interpolate"] = new() { CreateMethod("cubic_interpolate", "Vector4", ("b", "Vector4"), ("pre_a", "Vector4"), ("post_b", "Vector4"), ("weight", "float")) },
+                ["cubic_interpolate_in_time"] = new() { CreateMethod("cubic_interpolate_in_time", "Vector4", ("b", "Vector4"), ("pre_a", "Vector4"), ("post_b", "Vector4"), ("weight", "float"), ("b_t", "float"), ("pre_a_t", "float"), ("post_b_t", "float")) },
+                ["direction_to"] = new() { CreateMethod("direction_to", "Vector4", ("to", "Vector4")) },
+                ["distance_squared_to"] = new() { CreateMethod("distance_squared_to", "float", ("to", "Vector4")) },
+                ["distance_to"] = new() { CreateMethod("distance_to", "float", ("to", "Vector4")) },
+                ["dot"] = new() { CreateMethod("dot", "float", ("with", "Vector4")) },
+                ["floor"] = new() { CreateMethod("floor", "Vector4") },
+                ["inverse"] = new() { CreateMethod("inverse", "Vector4") },
+                ["is_equal_approx"] = new() { CreateMethod("is_equal_approx", "bool", ("to", "Vector4")) },
+                ["is_finite"] = new() { CreateMethod("is_finite", "bool") },
+                ["is_normalized"] = new() { CreateMethod("is_normalized", "bool") },
+                ["is_zero_approx"] = new() { CreateMethod("is_zero_approx", "bool") },
+                ["length"] = new() { CreateMethod("length", "float") },
+                ["length_squared"] = new() { CreateMethod("length_squared", "float") },
+                ["lerp"] = new() { CreateMethod("lerp", "Vector4", ("to", "Vector4"), ("weight", "float")) },
+                ["max"] = new() { CreateMethod("max", "Vector4", ("with", "Vector4")) },
+                ["min"] = new() { CreateMethod("min", "Vector4", ("with", "Vector4")) },
+                ["normalized"] = new() { CreateMethod("normalized", "Vector4") },
+                ["posmod"] = new() { CreateMethod("posmod", "Vector4", ("mod", "float")) },
+                ["posmodv"] = new() { CreateMethod("posmodv", "Vector4", ("modv", "Vector4")) },
+                ["round"] = new() { CreateMethod("round", "Vector4") },
+                ["sign"] = new() { CreateMethod("sign", "Vector4") },
+                ["snapped"] = new() { CreateMethod("snapped", "Vector4", ("step", "Vector4")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["x"] = CreateProperty("x", "float"),
+                ["y"] = CreateProperty("y", "float"),
+                ["z"] = CreateProperty("z", "float"),
+                ["w"] = CreateProperty("w", "float"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["ZERO"] = CreateConstant("ZERO", "Vector4"),
+                ["ONE"] = CreateConstant("ONE", "Vector4"),
+                ["INF"] = CreateConstant("INF", "Vector4"),
+            });
+
+            // Vector4i
+            AddBuiltinType(typeDatas, "Vector4i", typeof(Vector4I), new Dictionary<string, List<GDMethodData>>
+            {
+                ["abs"] = new() { CreateMethod("abs", "Vector4i") },
+                ["clamp"] = new() { CreateMethod("clamp", "Vector4i", ("min", "Vector4i"), ("max", "Vector4i")) },
+                ["distance_squared_to"] = new() { CreateMethod("distance_squared_to", "int", ("to", "Vector4i")) },
+                ["distance_to"] = new() { CreateMethod("distance_to", "float", ("to", "Vector4i")) },
+                ["length"] = new() { CreateMethod("length", "float") },
+                ["length_squared"] = new() { CreateMethod("length_squared", "int") },
+                ["max"] = new() { CreateMethod("max", "Vector4i", ("with", "Vector4i")) },
+                ["min"] = new() { CreateMethod("min", "Vector4i", ("with", "Vector4i")) },
+                ["sign"] = new() { CreateMethod("sign", "Vector4i") },
+                ["snapped"] = new() { CreateMethod("snapped", "Vector4i", ("step", "Vector4i")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["x"] = CreateProperty("x", "int"),
+                ["y"] = CreateProperty("y", "int"),
+                ["z"] = CreateProperty("z", "int"),
+                ["w"] = CreateProperty("w", "int"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["ZERO"] = CreateConstant("ZERO", "Vector4i"),
+                ["ONE"] = CreateConstant("ONE", "Vector4i"),
+                ["MIN"] = CreateConstant("MIN", "Vector4i"),
+                ["MAX"] = CreateConstant("MAX", "Vector4i"),
+            });
+
+            // Rect2i
+            AddBuiltinType(typeDatas, "Rect2i", typeof(Rect2I), new Dictionary<string, List<GDMethodData>>
+            {
+                ["abs"] = new() { CreateMethod("abs", "Rect2i") },
+                ["encloses"] = new() { CreateMethod("encloses", "bool", ("b", "Rect2i")) },
+                ["expand"] = new() { CreateMethod("expand", "Rect2i", ("to", "Vector2i")) },
+                ["get_area"] = new() { CreateMethod("get_area", "int") },
+                ["get_center"] = new() { CreateMethod("get_center", "Vector2i") },
+                ["grow"] = new() { CreateMethod("grow", "Rect2i", ("amount", "int")) },
+                ["grow_individual"] = new() { CreateMethod("grow_individual", "Rect2i", ("left", "int"), ("top", "int"), ("right", "int"), ("bottom", "int")) },
+                ["grow_side"] = new() { CreateMethod("grow_side", "Rect2i", ("side", "int"), ("amount", "int")) },
+                ["has_area"] = new() { CreateMethod("has_area", "bool") },
+                ["has_point"] = new() { CreateMethod("has_point", "bool", ("point", "Vector2i")) },
+                ["intersection"] = new() { CreateMethod("intersection", "Rect2i", ("b", "Rect2i")) },
+                ["intersects"] = new() { CreateMethod("intersects", "bool", ("b", "Rect2i")) },
+                ["merge"] = new() { CreateMethod("merge", "Rect2i", ("b", "Rect2i")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["position"] = CreateProperty("position", "Vector2i"),
+                ["size"] = CreateProperty("size", "Vector2i"),
+                ["end"] = CreateProperty("end", "Vector2i"),
+            }, new Dictionary<string, GDConstantInfo>());
+
+            // Transform2D
+            AddBuiltinType(typeDatas, "Transform2D", typeof(Transform2D), new Dictionary<string, List<GDMethodData>>
+            {
+                ["affine_inverse"] = new() { CreateMethod("affine_inverse", "Transform2D") },
+                ["basis_xform"] = new() { CreateMethod("basis_xform", "Vector2", ("v", "Vector2")) },
+                ["basis_xform_inv"] = new() { CreateMethod("basis_xform_inv", "Vector2", ("v", "Vector2")) },
+                ["determinant"] = new() { CreateMethod("determinant", "float") },
+                ["get_rotation"] = new() { CreateMethod("get_rotation", "float") },
+                ["get_scale"] = new() { CreateMethod("get_scale", "Vector2") },
+                ["get_skew"] = new() { CreateMethod("get_skew", "float") },
+                ["interpolate_with"] = new() { CreateMethod("interpolate_with", "Transform2D", ("xform", "Transform2D"), ("weight", "float")) },
+                ["inverse"] = new() { CreateMethod("inverse", "Transform2D") },
+                ["is_equal_approx"] = new() { CreateMethod("is_equal_approx", "bool", ("xform", "Transform2D")) },
+                ["is_finite"] = new() { CreateMethod("is_finite", "bool") },
+                ["looking_at"] = new() { CreateMethod("looking_at", "Transform2D", ("target", "Vector2")) },
+                ["orthonormalized"] = new() { CreateMethod("orthonormalized", "Transform2D") },
+                ["rotated"] = new() { CreateMethod("rotated", "Transform2D", ("angle", "float")) },
+                ["rotated_local"] = new() { CreateMethod("rotated_local", "Transform2D", ("angle", "float")) },
+                ["scaled"] = new() { CreateMethod("scaled", "Transform2D", ("scale", "Vector2")) },
+                ["scaled_local"] = new() { CreateMethod("scaled_local", "Transform2D", ("scale", "Vector2")) },
+                ["translated"] = new() { CreateMethod("translated", "Transform2D", ("offset", "Vector2")) },
+                ["translated_local"] = new() { CreateMethod("translated_local", "Transform2D", ("offset", "Vector2")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["x"] = CreateProperty("x", "Vector2"),
+                ["y"] = CreateProperty("y", "Vector2"),
+                ["origin"] = CreateProperty("origin", "Vector2"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["IDENTITY"] = CreateConstant("IDENTITY", "Transform2D"),
+                ["FLIP_X"] = CreateConstant("FLIP_X", "Transform2D"),
+                ["FLIP_Y"] = CreateConstant("FLIP_Y", "Transform2D"),
+            });
+
+            // Transform3D
+            AddBuiltinType(typeDatas, "Transform3D", typeof(Transform3D), new Dictionary<string, List<GDMethodData>>
+            {
+                ["affine_inverse"] = new() { CreateMethod("affine_inverse", "Transform3D") },
+                ["interpolate_with"] = new() { CreateMethod("interpolate_with", "Transform3D", ("xform", "Transform3D"), ("weight", "float")) },
+                ["inverse"] = new() { CreateMethod("inverse", "Transform3D") },
+                ["is_equal_approx"] = new() { CreateMethod("is_equal_approx", "bool", ("xform", "Transform3D")) },
+                ["is_finite"] = new() { CreateMethod("is_finite", "bool") },
+                ["looking_at"] = new() { CreateMethod("looking_at", "Transform3D", ("target", "Vector3"), ("up", "Vector3")) },
+                ["orthonormalized"] = new() { CreateMethod("orthonormalized", "Transform3D") },
+                ["rotated"] = new() { CreateMethod("rotated", "Transform3D", ("axis", "Vector3"), ("angle", "float")) },
+                ["rotated_local"] = new() { CreateMethod("rotated_local", "Transform3D", ("axis", "Vector3"), ("angle", "float")) },
+                ["scaled"] = new() { CreateMethod("scaled", "Transform3D", ("scale", "Vector3")) },
+                ["scaled_local"] = new() { CreateMethod("scaled_local", "Transform3D", ("scale", "Vector3")) },
+                ["translated"] = new() { CreateMethod("translated", "Transform3D", ("offset", "Vector3")) },
+                ["translated_local"] = new() { CreateMethod("translated_local", "Transform3D", ("offset", "Vector3")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["basis"] = CreateProperty("basis", "Basis"),
+                ["origin"] = CreateProperty("origin", "Vector3"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["IDENTITY"] = CreateConstant("IDENTITY", "Transform3D"),
+                ["FLIP_X"] = CreateConstant("FLIP_X", "Transform3D"),
+                ["FLIP_Y"] = CreateConstant("FLIP_Y", "Transform3D"),
+                ["FLIP_Z"] = CreateConstant("FLIP_Z", "Transform3D"),
+            });
+
+            // Basis
+            AddBuiltinType(typeDatas, "Basis", typeof(Basis), new Dictionary<string, List<GDMethodData>>
+            {
+                ["determinant"] = new() { CreateMethod("determinant", "float") },
+                ["from_euler"] = new() { CreateMethod("from_euler", "Basis", true, ("euler", "Vector3"), ("order", "int")) },
+                ["from_scale"] = new() { CreateMethod("from_scale", "Basis", true, ("scale", "Vector3")) },
+                ["get_euler"] = new() { CreateMethod("get_euler", "Vector3", ("order", "int")) },
+                ["get_rotation_quaternion"] = new() { CreateMethod("get_rotation_quaternion", "Quaternion") },
+                ["get_scale"] = new() { CreateMethod("get_scale", "Vector3") },
+                ["inverse"] = new() { CreateMethod("inverse", "Basis") },
+                ["is_equal_approx"] = new() { CreateMethod("is_equal_approx", "bool", ("b", "Basis")) },
+                ["is_finite"] = new() { CreateMethod("is_finite", "bool") },
+                ["looking_at"] = new() { CreateMethod("looking_at", "Basis", true, ("target", "Vector3"), ("up", "Vector3")) },
+                ["orthonormalized"] = new() { CreateMethod("orthonormalized", "Basis") },
+                ["rotated"] = new() { CreateMethod("rotated", "Basis", ("axis", "Vector3"), ("angle", "float")) },
+                ["scaled"] = new() { CreateMethod("scaled", "Basis", ("scale", "Vector3")) },
+                ["slerp"] = new() { CreateMethod("slerp", "Basis", ("to", "Basis"), ("weight", "float")) },
+                ["tdotx"] = new() { CreateMethod("tdotx", "float", ("with", "Vector3")) },
+                ["tdoty"] = new() { CreateMethod("tdoty", "float", ("with", "Vector3")) },
+                ["tdotz"] = new() { CreateMethod("tdotz", "float", ("with", "Vector3")) },
+                ["transposed"] = new() { CreateMethod("transposed", "Basis") },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["x"] = CreateProperty("x", "Vector3"),
+                ["y"] = CreateProperty("y", "Vector3"),
+                ["z"] = CreateProperty("z", "Vector3"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["IDENTITY"] = CreateConstant("IDENTITY", "Basis"),
+                ["FLIP_X"] = CreateConstant("FLIP_X", "Basis"),
+                ["FLIP_Y"] = CreateConstant("FLIP_Y", "Basis"),
+                ["FLIP_Z"] = CreateConstant("FLIP_Z", "Basis"),
+            });
+
+            // Quaternion
+            AddBuiltinType(typeDatas, "Quaternion", typeof(Quaternion), new Dictionary<string, List<GDMethodData>>
+            {
+                ["angle_to"] = new() { CreateMethod("angle_to", "float", ("to", "Quaternion")) },
+                ["dot"] = new() { CreateMethod("dot", "float", ("with", "Quaternion")) },
+                ["exp"] = new() { CreateMethod("exp", "Quaternion") },
+                ["from_euler"] = new() { CreateMethod("from_euler", "Quaternion", true, ("euler", "Vector3")) },
+                ["get_angle"] = new() { CreateMethod("get_angle", "float") },
+                ["get_axis"] = new() { CreateMethod("get_axis", "Vector3") },
+                ["get_euler"] = new() { CreateMethod("get_euler", "Vector3", ("order", "int")) },
+                ["inverse"] = new() { CreateMethod("inverse", "Quaternion") },
+                ["is_equal_approx"] = new() { CreateMethod("is_equal_approx", "bool", ("to", "Quaternion")) },
+                ["is_finite"] = new() { CreateMethod("is_finite", "bool") },
+                ["is_normalized"] = new() { CreateMethod("is_normalized", "bool") },
+                ["length"] = new() { CreateMethod("length", "float") },
+                ["length_squared"] = new() { CreateMethod("length_squared", "float") },
+                ["log"] = new() { CreateMethod("log", "Quaternion") },
+                ["normalized"] = new() { CreateMethod("normalized", "Quaternion") },
+                ["slerp"] = new() { CreateMethod("slerp", "Quaternion", ("to", "Quaternion"), ("weight", "float")) },
+                ["slerpni"] = new() { CreateMethod("slerpni", "Quaternion", ("to", "Quaternion"), ("weight", "float")) },
+                ["spherical_cubic_interpolate"] = new() { CreateMethod("spherical_cubic_interpolate", "Quaternion", ("b", "Quaternion"), ("pre_a", "Quaternion"), ("post_b", "Quaternion"), ("weight", "float")) },
+                ["spherical_cubic_interpolate_in_time"] = new() { CreateMethod("spherical_cubic_interpolate_in_time", "Quaternion", ("b", "Quaternion"), ("pre_a", "Quaternion"), ("post_b", "Quaternion"), ("weight", "float"), ("b_t", "float"), ("pre_a_t", "float"), ("post_b_t", "float")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["x"] = CreateProperty("x", "float"),
+                ["y"] = CreateProperty("y", "float"),
+                ["z"] = CreateProperty("z", "float"),
+                ["w"] = CreateProperty("w", "float"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["IDENTITY"] = CreateConstant("IDENTITY", "Quaternion"),
+            });
+
+            // Plane
+            AddBuiltinType(typeDatas, "Plane", typeof(Plane), new Dictionary<string, List<GDMethodData>>
+            {
+                ["distance_to"] = new() { CreateMethod("distance_to", "float", ("point", "Vector3")) },
+                ["get_center"] = new() { CreateMethod("get_center", "Vector3") },
+                ["has_point"] = new() { CreateMethod("has_point", "bool", ("point", "Vector3"), ("tolerance", "float")) },
+                ["intersect_3"] = new() { CreateMethod("intersect_3", "Variant", ("b", "Plane"), ("c", "Plane")) },
+                ["intersects_ray"] = new() { CreateMethod("intersects_ray", "Variant", ("from", "Vector3"), ("dir", "Vector3")) },
+                ["intersects_segment"] = new() { CreateMethod("intersects_segment", "Variant", ("from", "Vector3"), ("to", "Vector3")) },
+                ["is_equal_approx"] = new() { CreateMethod("is_equal_approx", "bool", ("to_plane", "Plane")) },
+                ["is_finite"] = new() { CreateMethod("is_finite", "bool") },
+                ["is_point_over"] = new() { CreateMethod("is_point_over", "bool", ("point", "Vector3")) },
+                ["normalized"] = new() { CreateMethod("normalized", "Plane") },
+                ["project"] = new() { CreateMethod("project", "Vector3", ("point", "Vector3")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["x"] = CreateProperty("x", "float"),
+                ["y"] = CreateProperty("y", "float"),
+                ["z"] = CreateProperty("z", "float"),
+                ["d"] = CreateProperty("d", "float"),
+                ["normal"] = CreateProperty("normal", "Vector3"),
+            }, new Dictionary<string, GDConstantInfo>
+            {
+                ["PLANE_XY"] = CreateConstant("PLANE_XY", "Plane"),
+                ["PLANE_XZ"] = CreateConstant("PLANE_XZ", "Plane"),
+                ["PLANE_YZ"] = CreateConstant("PLANE_YZ", "Plane"),
+            });
+
+            // AABB
+            AddBuiltinType(typeDatas, "AABB", typeof(Aabb), new Dictionary<string, List<GDMethodData>>
+            {
+                ["abs"] = new() { CreateMethod("abs", "AABB") },
+                ["encloses"] = new() { CreateMethod("encloses", "bool", ("with", "AABB")) },
+                ["expand"] = new() { CreateMethod("expand", "AABB", ("to_point", "Vector3")) },
+                ["get_center"] = new() { CreateMethod("get_center", "Vector3") },
+                ["get_endpoint"] = new() { CreateMethod("get_endpoint", "Vector3", ("idx", "int")) },
+                ["get_longest_axis"] = new() { CreateMethod("get_longest_axis", "Vector3") },
+                ["get_longest_axis_index"] = new() { CreateMethod("get_longest_axis_index", "int") },
+                ["get_longest_axis_size"] = new() { CreateMethod("get_longest_axis_size", "float") },
+                ["get_shortest_axis"] = new() { CreateMethod("get_shortest_axis", "Vector3") },
+                ["get_shortest_axis_index"] = new() { CreateMethod("get_shortest_axis_index", "int") },
+                ["get_shortest_axis_size"] = new() { CreateMethod("get_shortest_axis_size", "float") },
+                ["get_support"] = new() { CreateMethod("get_support", "Vector3", ("dir", "Vector3")) },
+                ["get_volume"] = new() { CreateMethod("get_volume", "float") },
+                ["grow"] = new() { CreateMethod("grow", "AABB", ("by", "float")) },
+                ["has_point"] = new() { CreateMethod("has_point", "bool", ("point", "Vector3")) },
+                ["has_surface"] = new() { CreateMethod("has_surface", "bool") },
+                ["has_volume"] = new() { CreateMethod("has_volume", "bool") },
+                ["intersection"] = new() { CreateMethod("intersection", "AABB", ("with", "AABB")) },
+                ["intersects"] = new() { CreateMethod("intersects", "bool", ("with", "AABB")) },
+                ["intersects_plane"] = new() { CreateMethod("intersects_plane", "bool", ("plane", "Plane")) },
+                ["intersects_ray"] = new() { CreateMethod("intersects_ray", "Variant", ("from", "Vector3"), ("dir", "Vector3")) },
+                ["intersects_segment"] = new() { CreateMethod("intersects_segment", "bool", ("from", "Vector3"), ("to", "Vector3")) },
+                ["is_equal_approx"] = new() { CreateMethod("is_equal_approx", "bool", ("aabb", "AABB")) },
+                ["is_finite"] = new() { CreateMethod("is_finite", "bool") },
+                ["merge"] = new() { CreateMethod("merge", "AABB", ("with", "AABB")) },
+            }, new Dictionary<string, GDPropertyData>
+            {
+                ["position"] = CreateProperty("position", "Vector3"),
+                ["size"] = CreateProperty("size", "Vector3"),
+                ["end"] = CreateProperty("end", "Vector3"),
+            }, new Dictionary<string, GDConstantInfo>());
+
+            // RID
+            AddBuiltinType(typeDatas, "RID", typeof(Rid), new Dictionary<string, List<GDMethodData>>
+            {
+                ["get_id"] = new() { CreateMethod("get_id", "int") },
+                ["is_valid"] = new() { CreateMethod("is_valid", "bool") },
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+
+            // PackedByteArray
+            AddBuiltinType(typeDatas, "PackedByteArray", typeof(byte[]), new Dictionary<string, List<GDMethodData>>
+            {
+                ["append"] = new() { CreateMethod("append", "bool", ("value", "int")) },
+                ["append_array"] = new() { CreateMethod("append_array", "void", ("array", "PackedByteArray")) },
+                ["bsearch"] = new() { CreateMethod("bsearch", "int", ("value", "int"), ("before", "bool")) },
+                ["clear"] = new() { CreateMethod("clear", "void") },
+                ["compress"] = new() { CreateMethod("compress", "PackedByteArray", ("compression_mode", "int")) },
+                ["count"] = new() { CreateMethod("count", "int", ("value", "int")) },
+                ["decode_double"] = new() { CreateMethod("decode_double", "float", ("byte_offset", "int")) },
+                ["decode_float"] = new() { CreateMethod("decode_float", "float", ("byte_offset", "int")) },
+                ["decode_half"] = new() { CreateMethod("decode_half", "float", ("byte_offset", "int")) },
+                ["decode_s16"] = new() { CreateMethod("decode_s16", "int", ("byte_offset", "int")) },
+                ["decode_s32"] = new() { CreateMethod("decode_s32", "int", ("byte_offset", "int")) },
+                ["decode_s64"] = new() { CreateMethod("decode_s64", "int", ("byte_offset", "int")) },
+                ["decode_s8"] = new() { CreateMethod("decode_s8", "int", ("byte_offset", "int")) },
+                ["decode_u16"] = new() { CreateMethod("decode_u16", "int", ("byte_offset", "int")) },
+                ["decode_u32"] = new() { CreateMethod("decode_u32", "int", ("byte_offset", "int")) },
+                ["decode_u64"] = new() { CreateMethod("decode_u64", "int", ("byte_offset", "int")) },
+                ["decode_u8"] = new() { CreateMethod("decode_u8", "int", ("byte_offset", "int")) },
+                ["decompress"] = new() { CreateMethod("decompress", "PackedByteArray", ("buffer_size", "int"), ("compression_mode", "int")) },
+                ["decompress_dynamic"] = new() { CreateMethod("decompress_dynamic", "PackedByteArray", ("max_output_size", "int"), ("compression_mode", "int")) },
+                ["duplicate"] = new() { CreateMethod("duplicate", "PackedByteArray") },
+                ["encode_double"] = new() { CreateMethod("encode_double", "void", ("byte_offset", "int"), ("value", "float")) },
+                ["encode_float"] = new() { CreateMethod("encode_float", "void", ("byte_offset", "int"), ("value", "float")) },
+                ["encode_half"] = new() { CreateMethod("encode_half", "void", ("byte_offset", "int"), ("value", "float")) },
+                ["encode_s16"] = new() { CreateMethod("encode_s16", "void", ("byte_offset", "int"), ("value", "int")) },
+                ["encode_s32"] = new() { CreateMethod("encode_s32", "void", ("byte_offset", "int"), ("value", "int")) },
+                ["encode_s64"] = new() { CreateMethod("encode_s64", "void", ("byte_offset", "int"), ("value", "int")) },
+                ["encode_s8"] = new() { CreateMethod("encode_s8", "void", ("byte_offset", "int"), ("value", "int")) },
+                ["encode_u16"] = new() { CreateMethod("encode_u16", "void", ("byte_offset", "int"), ("value", "int")) },
+                ["encode_u32"] = new() { CreateMethod("encode_u32", "void", ("byte_offset", "int"), ("value", "int")) },
+                ["encode_u64"] = new() { CreateMethod("encode_u64", "void", ("byte_offset", "int"), ("value", "int")) },
+                ["encode_u8"] = new() { CreateMethod("encode_u8", "void", ("byte_offset", "int"), ("value", "int")) },
+                ["fill"] = new() { CreateMethod("fill", "void", ("value", "int")) },
+                ["find"] = new() { CreateMethod("find", "int", ("value", "int"), ("from", "int")) },
+                ["get_string_from_ascii"] = new() { CreateMethod("get_string_from_ascii", "String") },
+                ["get_string_from_utf16"] = new() { CreateMethod("get_string_from_utf16", "String") },
+                ["get_string_from_utf32"] = new() { CreateMethod("get_string_from_utf32", "String") },
+                ["get_string_from_utf8"] = new() { CreateMethod("get_string_from_utf8", "String") },
+                ["get_string_from_wchar"] = new() { CreateMethod("get_string_from_wchar", "String") },
+                ["has"] = new() { CreateMethod("has", "bool", ("value", "int")) },
+                ["hex_encode"] = new() { CreateMethod("hex_encode", "String") },
+                ["insert"] = new() { CreateMethod("insert", "int", ("at_index", "int"), ("value", "int")) },
+                ["is_empty"] = new() { CreateMethod("is_empty", "bool") },
+                ["push_back"] = new() { CreateMethod("push_back", "bool", ("value", "int")) },
+                ["remove_at"] = new() { CreateMethod("remove_at", "void", ("index", "int")) },
+                ["resize"] = new() { CreateMethod("resize", "int", ("new_size", "int")) },
+                ["reverse"] = new() { CreateMethod("reverse", "void") },
+                ["rfind"] = new() { CreateMethod("rfind", "int", ("value", "int"), ("from", "int")) },
+                ["size"] = new() { CreateMethod("size", "int") },
+                ["slice"] = new() { CreateMethod("slice", "PackedByteArray", ("begin", "int"), ("end", "int")) },
+                ["sort"] = new() { CreateMethod("sort", "void") },
+                ["to_float32_array"] = new() { CreateMethod("to_float32_array", "PackedFloat32Array") },
+                ["to_float64_array"] = new() { CreateMethod("to_float64_array", "PackedFloat64Array") },
+                ["to_int32_array"] = new() { CreateMethod("to_int32_array", "PackedInt32Array") },
+                ["to_int64_array"] = new() { CreateMethod("to_int64_array", "PackedInt64Array") },
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+
+            // PackedStringArray
+            AddBuiltinType(typeDatas, "PackedStringArray", typeof(string[]), new Dictionary<string, List<GDMethodData>>
+            {
+                ["append"] = new() { CreateMethod("append", "bool", ("value", "String")) },
+                ["append_array"] = new() { CreateMethod("append_array", "void", ("array", "PackedStringArray")) },
+                ["bsearch"] = new() { CreateMethod("bsearch", "int", ("value", "String"), ("before", "bool")) },
+                ["clear"] = new() { CreateMethod("clear", "void") },
+                ["count"] = new() { CreateMethod("count", "int", ("value", "String")) },
+                ["duplicate"] = new() { CreateMethod("duplicate", "PackedStringArray") },
+                ["fill"] = new() { CreateMethod("fill", "void", ("value", "String")) },
+                ["find"] = new() { CreateMethod("find", "int", ("value", "String"), ("from", "int")) },
+                ["has"] = new() { CreateMethod("has", "bool", ("value", "String")) },
+                ["insert"] = new() { CreateMethod("insert", "int", ("at_index", "int"), ("value", "String")) },
+                ["is_empty"] = new() { CreateMethod("is_empty", "bool") },
+                ["push_back"] = new() { CreateMethod("push_back", "bool", ("value", "String")) },
+                ["remove_at"] = new() { CreateMethod("remove_at", "void", ("index", "int")) },
+                ["resize"] = new() { CreateMethod("resize", "int", ("new_size", "int")) },
+                ["reverse"] = new() { CreateMethod("reverse", "void") },
+                ["rfind"] = new() { CreateMethod("rfind", "int", ("value", "String"), ("from", "int")) },
+                ["size"] = new() { CreateMethod("size", "int") },
+                ["slice"] = new() { CreateMethod("slice", "PackedStringArray", ("begin", "int"), ("end", "int")) },
+                ["sort"] = new() { CreateMethod("sort", "void") },
+                ["to_byte_array"] = new() { CreateMethod("to_byte_array", "PackedByteArray") },
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+        }
+
+        private static void AddBuiltinType(
+            Dictionary<string, Dictionary<string, GDTypeData>> typeDatas,
+            string gdScriptName,
+            Type csharpType,
+            Dictionary<string, List<GDMethodData>> methods,
+            Dictionary<string, GDPropertyData> properties,
+            Dictionary<string, GDConstantInfo> constants)
+        {
+            var typeData = new GDTypeData
+            {
+                GDScriptName = gdScriptName,
+                CSharpName = csharpType.Name,
+                CSharpNamespace = csharpType.Namespace,
+                IsBuiltin = true,
+                IsEnum = false,
+                IsStatic = false,
+                MethodDatas = methods,
+                PropertyDatas = properties,
+                Constants = constants,
+                SignalDatas = new Dictionary<string, GDSignalData>(),
+                Enums = new Dictionary<string, GDEnumTypeInfo>(),
+                EnumsConstants = new Dictionary<string, GDEnumTypeInfo>()
+            };
+
+            if (!typeDatas.TryGetValue(gdScriptName, out var dict))
+            {
+                typeDatas[gdScriptName] = dict = new Dictionary<string, GDTypeData>();
+            }
+
+            dict[csharpType.FullName ?? csharpType.Name] = typeData;
+        }
+
+        private static GDMethodData CreateMethod(string name, string returnType, params (string name, string type)[] parameters)
+        {
+            return CreateMethod(name, returnType, false, parameters);
+        }
+
+        private static GDMethodData CreateMethod(string name, string returnType, bool isStatic, params (string name, string type)[] parameters)
+        {
+            return new GDMethodData
+            {
+                GDScriptName = name,
+                CSharpName = ToPascalCase(name),
+                GDScriptReturnTypeName = returnType,
+                CSharpReturnTypeName = MapGDScriptTypeToCSharp(returnType),
+                ReturnsVoid = returnType == "void",
+                IsStatic = isStatic,
+                GDScriptParameterTypeNames = parameters.Select(p => p.type).ToArray(),
+                CSharpParameterTypeNames = parameters.Select(p => MapGDScriptTypeToCSharp(p.type)).ToArray(),
+                Parameters = parameters.Select((p, i) => new GDParameterInfo
+                {
+                    CSharpName = ToPascalCase(p.name),
+                    GDScriptTypeName = p.type,
+                    CSharpTypeName = MapGDScriptTypeToCSharp(p.type),
+                    Position = i
+                }).ToArray()
+            };
+        }
+
+        private static GDMethodData CreateMethodVarargs(string name, string returnType)
+        {
+            return new GDMethodData
+            {
+                GDScriptName = name,
+                CSharpName = ToPascalCase(name),
+                GDScriptReturnTypeName = returnType,
+                CSharpReturnTypeName = MapGDScriptTypeToCSharp(returnType),
+                ReturnsVoid = returnType == "void",
+                IsStatic = false,
+                GDScriptParameterTypeNames = new[] { "Variant[]" },
+                CSharpParameterTypeNames = new[] { "Object[]" },
+                Parameters = new[]
+                {
+                    new GDParameterInfo
+                    {
+                        CSharpName = "Args",
+                        GDScriptTypeName = "Variant[]",
+                        CSharpTypeName = "Object[]",
+                        Position = 0,
+                        IsParams = true
+                    }
+                }
+            };
+        }
+
+        private static GDPropertyData CreateProperty(string name, string type)
+        {
+            return new GDPropertyData
+            {
+                GDScriptName = name,
+                CSharpName = ToPascalCase(name),
+                GDScriptTypeName = type,
+                CSharpTypeName = MapGDScriptTypeToCSharp(type),
+                CanRead = true,
+                CanWrite = true
+            };
+        }
+
+        private static GDConstantInfo CreateConstant(string name, string type)
+        {
+            return new GDConstantInfo
+            {
+                GDScriptName = name,
+                CSharpName = name,
+                CSharpValueTypeName = MapGDScriptTypeToCSharp(type),
+                Value = name
+            };
+        }
+
+        private static string ToPascalCase(string snakeCase)
+        {
+            if (string.IsNullOrEmpty(snakeCase))
+                return snakeCase;
+
+            var parts = snakeCase.Split('_');
+            return string.Join("", parts.Select(p =>
+                string.IsNullOrEmpty(p) ? "" : char.ToUpper(p[0]) + (p.Length > 1 ? p.Substring(1) : "")));
+        }
+
+        private static string MapGDScriptTypeToCSharp(string gdType)
+        {
+            return gdType switch
+            {
+                "int" => "Int64",
+                "float" => "Double",
+                "bool" => "Boolean",
+                "void" => "Void",
+                "String" => "String",
+                "Vector2" => "Vector2",
+                "Vector3" => "Vector3",
+                "Color" => "Color",
+                "Array" => "Array",
+                "Dictionary" => "Dictionary",
+                "Variant" => "Variant",
+                "Object" => "GodotObject",
+                "Callable" => "Callable",
+                "Signal" => "Signal",
+                "StringName" => "StringName",
+                "NodePath" => "NodePath",
+                "PackedByteArray" => "Byte[]",
+                "PackedStringArray" => "String[]",
+                "PackedFloat64Array" => "Double[]",
+                _ => gdType
+            };
+        }
     }
 }

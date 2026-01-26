@@ -57,6 +57,12 @@ namespace GDShrapt.TypesMap
         /// </summary>
         public bool IsStatic { get; set; }
 
+        /// <summary>
+        /// Gets or sets a value indicating whether the type is a builtin value type
+        /// (e.g., Vector2, Color, Array, Dictionary, Signal) rather than a class.
+        /// </summary>
+        public bool IsBuiltin { get; set; }
+
         // ========================================
         // Members (keyed by GDScript names)
         // ========================================
