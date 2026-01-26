@@ -1399,6 +1399,23 @@ namespace GDShrapt.TypesMap
                    Variant.Operator.In,
                    Variant.Operator.Max,
              }));
+
+            // Object.ConnectFlags - used for signal connections
+            Add(dictionary, "ConnectFlags", new GDEnumTypeInfo("Object", typeof(GodotObject.ConnectFlags),
+             new[]
+             {
+                   "CONNECT_DEFERRED",
+                   "CONNECT_PERSIST",
+                   "CONNECT_ONE_SHOT",
+                   "CONNECT_REFERENCE_COUNTED",
+             },
+             new[]
+             {
+                   GodotObject.ConnectFlags.Deferred,
+                   GodotObject.ConnectFlags.Persist,
+                   GodotObject.ConnectFlags.OneShot,
+                   GodotObject.ConnectFlags.ReferenceCounted,
+             }));
         }
     }
 }
