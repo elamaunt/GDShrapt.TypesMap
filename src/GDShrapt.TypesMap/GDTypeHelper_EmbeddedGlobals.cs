@@ -147,6 +147,12 @@ namespace GDShrapt.TypesMap
             typeDatas["float"] = new GDGlobalTypeProxyInfo(typeof(double));
             typeDatas["int"] = new GDGlobalTypeProxyInfo(typeof(long));
             typeDatas["string"] = new GDGlobalTypeProxyInfo(typeof(string));
+            // GDScript accepts both "string" and "String" - add PascalCase alias
+            typeDatas["String"] = new GDGlobalTypeProxyInfo(typeof(string));
+            // Variant is the universal type in GDScript (accepts any value)
+            typeDatas["Variant"] = new GDGlobalTypeProxyInfo(typeof(Godot.Variant));
+            // "void" keyword for function returns (not a real type)
+            typeDatas["void"] = new GDGlobalTypeProxyInfo(typeof(void));
             typeDatas["vector2"] = new GDGlobalTypeProxyInfo(typeof(Vector2));
             typeDatas["vector2i"] = new GDGlobalTypeProxyInfo(typeof(Vector2I));
             typeDatas["rect2"] = new GDGlobalTypeProxyInfo(typeof(Rect2));
