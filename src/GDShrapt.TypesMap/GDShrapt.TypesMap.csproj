@@ -59,6 +59,10 @@ v4.5.1.0:
   </ItemGroup>
 
   <ItemGroup>
+    <InternalsVisibleTo Include="GDShrapt.TypesMap.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="..\..\LICENSE">
       <Pack>True</Pack>
       <PackagePath></PackagePath>

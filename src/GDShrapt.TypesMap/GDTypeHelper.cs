@@ -14,6 +14,10 @@ namespace GDShrapt.TypesMap
     {
         internal static GDUnresolvedBundle? LastUnresolvedBundle { get; private set; }
 
+        // Thread-safe caching for manifest data
+        private static readonly object _manifestLock = new object();
+        private static GDAssemblyData? _cachedManifestData;
+
         private static bool TryParseJsonFromManifest<T>(string fileName, out T? values) where T : class
         {
             var data = ReadManifestFile(fileName);
@@ -62,43 +66,67 @@ namespace GDShrapt.TypesMap
         /// Extracts type data from the embedded manifest (AssemblyData.json).
         /// This method works without requiring Godot runtime and is the preferred
         /// method for standalone/CLI usage.
+        /// Thread-safe: uses caching with double-check locking.
         /// </summary>
         /// <returns>The extracted assembly data, or null if the manifest cannot be loaded.</returns>
         public static GDAssemblyData? ExtractTypeDatasFromManifest()
         {
-            TryParseJsonFromManifest<GDAssemblyData>("AssemblyData.json", out var data);
+            // Fast path: already cached
+            if (_cachedManifestData != null)
+                return _cachedManifestData;
 
-            if (data != null)
+            lock (_manifestLock)
             {
-                if (data.Metadata == null)
+                // Double-check after acquiring lock
+                if (_cachedManifestData != null)
+                    return _cachedManifestData;
+
+                TryParseJsonFromManifest<GDAssemblyData>("AssemblyData.json", out var data);
+
+                if (data != null)
                 {
-                    data.Metadata = new GDAssemblyMetadata { Source = "Manifest" };
-                }
-                else
-                {
-                    data.Metadata.Source = "Manifest";
+                    if (data.Metadata == null)
+                    {
+                        data.Metadata = new GDAssemblyMetadata { Source = "Manifest" };
+                    }
+                    else
+                    {
+                        data.Metadata.Source = "Manifest";
+                    }
+
+                    // Apply embedded globals to override/extend the loaded data
+                    // This ensures runtime code changes take effect without regenerating JSON
+                    if (data.GlobalData != null)
+                    {
+                        AddEmbeddedGlobalEnums(data.GlobalData.Enums);
+                        AddEmbeddedGlobalMethods(data.GlobalData.MethodDatas);
+                        AddEmbeddedGlobalConstants(data.GlobalData.Constants);
+                        AddEmbeddedGlobalTypes(data.GlobalData.GlobalTypes);
+                        AddEmbeddedGDScriptMethods(data.GlobalData.MethodDatas);
+                        data.GlobalData.BuildEnumsConstants();
+                    }
+
+                    // Add builtin types (Vector2, Color, Array, etc.) with their methods
+                    if (data.TypeDatas != null)
+                    {
+                        AddEmbeddedBuiltinTypes(data.TypeDatas);
+                    }
                 }
 
-                // Apply embedded globals to override/extend the loaded data
-                // This ensures runtime code changes take effect without regenerating JSON
-                if (data.GlobalData != null)
-                {
-                    AddEmbeddedGlobalEnums(data.GlobalData.Enums);
-                    AddEmbeddedGlobalMethods(data.GlobalData.MethodDatas);
-                    AddEmbeddedGlobalConstants(data.GlobalData.Constants);
-                    AddEmbeddedGlobalTypes(data.GlobalData.GlobalTypes);
-                    AddEmbeddedGDScriptMethods(data.GlobalData.MethodDatas);
-                    data.GlobalData.BuildEnumsConstants();
-                }
-
-                // Add builtin types (Vector2, Color, Array, etc.) with their methods
-                if (data.TypeDatas != null)
-                {
-                    AddEmbeddedBuiltinTypes(data.TypeDatas);
-                }
+                _cachedManifestData = data;
+                return data;
             }
+        }
 
-            return data;
+        /// <summary>
+        /// Resets the manifest cache. For testing purposes only.
+        /// </summary>
+        internal static void ResetManifestCache()
+        {
+            lock (_manifestLock)
+            {
+                _cachedManifestData = null;
+            }
         }
 
         /// <summary>

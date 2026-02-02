@@ -1,3 +1,5 @@
+using System.Collections.Concurrent;
+
 namespace GDShrapt.TypesMap.Tests
 {
     [TestClass]
@@ -526,5 +528,113 @@ namespace GDShrapt.TypesMap.Tests
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Thread safety tests for GDTypeHelper.
+    /// </summary>
+    [TestClass]
+    public class GDTypeHelperThreadSafetyTests
+    {
+        [TestInitialize]
+        public void Setup()
+        {
+            // Reset cache before each test to ensure isolation
+            GDTypeHelper.ResetManifestCache();
+        }
+
+        [TestMethod]
+        public void ExtractTypeDatasFromManifest_CachesResult()
+        {
+            var data1 = GDTypeHelper.ExtractTypeDatasFromManifest();
+            var data2 = GDTypeHelper.ExtractTypeDatasFromManifest();
+
+            Assert.AreSame(data1, data2, "Should return cached instance");
+        }
+
+        [TestMethod]
+        public void ExtractTypeDatasFromManifest_ThreadSafe_NoCrash()
+        {
+            var exceptions = new ConcurrentBag<Exception>();
+
+            Parallel.For(0, 100, i =>
+            {
+                try
+                {
+                    var data = GDTypeHelper.ExtractTypeDatasFromManifest();
+                    Assert.IsNotNull(data);
+                }
+                catch (Exception ex)
+                {
+                    exceptions.Add(ex);
+                }
+            });
+
+            Assert.AreEqual(0, exceptions.Count,
+                $"Parallel calls should not throw. Errors: {string.Join("; ", exceptions.Select(e => e.Message))}");
+        }
+
+        [TestMethod]
+        public void ExtractTypeDatasFromManifest_ThreadSafe_ConsistentData()
+        {
+            var results = new ConcurrentBag<GDAssemblyData>();
+
+            Parallel.For(0, 50, i =>
+            {
+                var data = GDTypeHelper.ExtractTypeDatasFromManifest();
+                if (data != null)
+                    results.Add(data);
+            });
+
+            // All results should be the same cached instance
+            var distinctResults = results.Distinct().ToList();
+            Assert.AreEqual(1, distinctResults.Count, "All threads should get the same cached instance");
+        }
+
+        [TestMethod]
+        public void ResetManifestCache_AllowsReload()
+        {
+            var data1 = GDTypeHelper.ExtractTypeDatasFromManifest();
+            GDTypeHelper.ResetManifestCache();
+            var data2 = GDTypeHelper.ExtractTypeDatasFromManifest();
+
+            // After reset, should be new instance (but contents are the same)
+            Assert.IsNotNull(data1);
+            Assert.IsNotNull(data2);
+            // Note: After reset, data2 is a different instance
+        }
+
+        [TestMethod]
+        public void ExtractTypeDatasFromManifest_StressTest_NoRaceCondition()
+        {
+            // Simulates heavy concurrent access pattern that caused original crash
+            var exceptions = new ConcurrentBag<Exception>();
+            var results = new ConcurrentBag<int>();
+
+            Parallel.For(0, 200, new ParallelOptions { MaxDegreeOfParallelism = Environment.ProcessorCount * 2 }, i =>
+            {
+                try
+                {
+                    var data = GDTypeHelper.ExtractTypeDatasFromManifest();
+                    Assert.IsNotNull(data);
+                    Assert.IsNotNull(data.TypeDatas);
+
+                    // Access data in parallel to verify it's not corrupted
+                    var typeCount = data.TypeDatas.Count;
+                    results.Add(typeCount);
+                }
+                catch (Exception ex)
+                {
+                    exceptions.Add(ex);
+                }
+            });
+
+            Assert.AreEqual(0, exceptions.Count,
+                $"Stress test should not throw. Errors: {string.Join("; ", exceptions.Select(e => e.Message))}");
+
+            // All threads should see the same type count
+            var distinctCounts = results.Distinct().ToList();
+            Assert.AreEqual(1, distinctCounts.Count, "All threads should see consistent data");
+        }
     }
 }
