@@ -89,6 +89,29 @@ namespace GDShrapt.TypesMap
         /// </summary>
         public bool IsGenericType { get; set; }
 
+        // ========================================
+        // Callable Parameter Metadata (Type Inference)
+        // ========================================
+
+        /// <summary>
+        /// For callable parameters: indicates what type(s) the callable should receive from the container.
+        /// Values: "element" (container element), "key" (dict key), "value" (dict value),
+        /// "key_value" (both key and value), "accumulator_element" (for reduce), "element_element" (for sort_custom)
+        /// </summary>
+        public string? CallableReceivesType { get; set; }
+
+        /// <summary>
+        /// For callable parameters: expected return type of the callable.
+        /// Values: "bool" (filter/any/all), "T" (map - element type), "Variant" (reduce)
+        /// </summary>
+        public string? CallableReturnsType { get; set; }
+
+        /// <summary>
+        /// For callable parameters: number of expected parameters.
+        /// e.g., filter=1, map=1, reduce=2, sort_custom=2
+        /// </summary>
+        public int? CallableParameterCount { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GDParameterInfo"/> class.
         /// </summary>

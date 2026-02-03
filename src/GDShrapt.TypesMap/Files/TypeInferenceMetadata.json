@@ -1,0 +1,109 @@
+{
+  "Array": {
+    "methods": {
+      "filter": {
+        "callable": {
+          "parameterIndex": 0,
+          "receivesType": "element",
+          "returnsType": "bool",
+          "parameterCount": 1
+        },
+        "returnTypeRole": "self"
+      },
+      "map": {
+        "callable": {
+          "parameterIndex": 0,
+          "receivesType": "element",
+          "returnsType": "T",
+          "parameterCount": 1
+        },
+        "returnTypeRole": "callable_return_array"
+      },
+      "reduce": {
+        "callable": {
+          "parameterIndex": 0,
+          "receivesType": "accumulator_element",
+          "returnsType": "Variant",
+          "parameterCount": 2
+        }
+      },
+      "any": {
+        "callable": {
+          "parameterIndex": 0,
+          "receivesType": "element",
+          "returnsType": "bool",
+          "parameterCount": 1
+        }
+      },
+      "all": {
+        "callable": {
+          "parameterIndex": 0,
+          "receivesType": "element",
+          "returnsType": "bool",
+          "parameterCount": 1
+        }
+      },
+      "sort_custom": {
+        "callable": {
+          "parameterIndex": 0,
+          "receivesType": "element_element",
+          "returnsType": "bool",
+          "parameterCount": 2
+        }
+      },
+      "front": {
+        "returnTypeRole": "element"
+      },
+      "back": {
+        "returnTypeRole": "element"
+      },
+      "pick_random": {
+        "returnTypeRole": "element"
+      },
+      "pop_front": {
+        "returnTypeRole": "element"
+      },
+      "pop_back": {
+        "returnTypeRole": "element"
+      },
+      "pop_at": {
+        "returnTypeRole": "element"
+      },
+      "slice": {
+        "returnTypeRole": "self"
+      },
+      "duplicate": {
+        "returnTypeRole": "self"
+      },
+      "append_array": {
+        "mergeTypeStrategy": "union_element"
+      }
+    }
+  },
+  "Dictionary": {
+    "methods": {
+      "get": {
+        "returnTypeRole": "value"
+      },
+      "find_key": {
+        "returnTypeRole": "key"
+      },
+      "keys": {
+        "returnTypeRole": "keys_array"
+      },
+      "values": {
+        "returnTypeRole": "values_array"
+      },
+      "duplicate": {
+        "returnTypeRole": "self"
+      },
+      "merge": {
+        "mergeTypeStrategy": "union_key_value"
+      },
+      "merged": {
+        "returnTypeRole": "self",
+        "mergeTypeStrategy": "union_key_value"
+      }
+    }
+  }
+}

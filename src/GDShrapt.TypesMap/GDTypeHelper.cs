@@ -28,7 +28,8 @@ namespace GDShrapt.TypesMap
                 return false;
             }
 
-            values = JsonSerializer.Deserialize<T?>(data);
+            // Use case-insensitive deserialization to correctly map camelCase JSON to PascalCase C# properties
+            values = JsonSerializer.Deserialize<T?>(data, CaseInsensitiveJsonOptions);
             return values != null;
         }
 
@@ -60,6 +61,11 @@ namespace GDShrapt.TypesMap
         private static readonly JsonSerializerOptions JsonOptions = new()
         {
             WriteIndented = false
+        };
+
+        private static readonly JsonSerializerOptions CaseInsensitiveJsonOptions = new()
+        {
+            PropertyNameCaseInsensitive = true
         };
 
         /// <summary>
@@ -111,6 +117,9 @@ namespace GDShrapt.TypesMap
                     {
                         AddEmbeddedBuiltinTypes(data.TypeDatas);
                     }
+
+                    // Apply type inference metadata from embedded JSON
+                    ApplyTypeInferenceMetadata(data);
                 }
 
                 _cachedManifestData = data;
@@ -600,6 +609,92 @@ namespace GDShrapt.TypesMap
             return type.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)
                 .Where(fi => fi.IsLiteral && !fi.IsInitOnly && fi.DeclaringType == type)
                 .ToList();
+        }
+
+        /// <summary>
+        /// Applies type inference metadata from embedded TypeInferenceMetadata.json.
+        /// This enriches method and parameter data with semantic information for type inference.
+        /// </summary>
+        private static void ApplyTypeInferenceMetadata(GDAssemblyData data)
+        {
+            if (!TryParseJsonFromManifest<Dictionary<string, TypeInferenceTypeMetadata>>("TypeInferenceMetadata.json", out var metadata))
+                return;
+
+            if (metadata == null || data.TypeDatas == null)
+                return;
+
+            foreach (var (typeName, typeMetadata) in metadata)
+            {
+                // Find the type in TypeDatas (could be under different keys)
+                GDTypeData? typeData = null;
+
+                if (data.TypeDatas.TryGetValue(typeName, out var typeDict) && typeDict.Count > 0)
+                {
+                    typeData = typeDict.Values.FirstOrDefault();
+                }
+
+                if (typeData == null)
+                    continue;
+
+                if (typeMetadata.Methods == null || typeData.MethodDatas == null)
+                    continue;
+
+                foreach (var (methodName, methodMetadata) in typeMetadata.Methods)
+                {
+                    if (!typeData.MethodDatas.TryGetValue(methodName, out var methodList) || methodList == null || methodList.Count == 0)
+                        continue;
+
+                    // Apply to all overloads
+                    foreach (var methodData in methodList)
+                    {
+                        // Apply callable metadata to parameter
+                        if (methodMetadata.Callable != null && methodData.Parameters != null)
+                        {
+                            var paramIndex = methodMetadata.Callable.ParameterIndex;
+                            if (paramIndex >= 0 && paramIndex < methodData.Parameters.Length)
+                            {
+                                var param = methodData.Parameters[paramIndex];
+                                param.CallableReceivesType = methodMetadata.Callable.ReceivesType;
+                                param.CallableReturnsType = methodMetadata.Callable.ReturnsType;
+                                param.CallableParameterCount = methodMetadata.Callable.ParameterCount;
+                            }
+                        }
+
+                        // Apply return type role
+                        if (methodMetadata.ReturnTypeRole != null)
+                        {
+                            methodData.ReturnTypeRole = methodMetadata.ReturnTypeRole;
+                        }
+
+                        // Apply merge strategy
+                        if (methodMetadata.MergeTypeStrategy != null)
+                        {
+                            methodData.MergeTypeStrategy = methodMetadata.MergeTypeStrategy;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Internal classes for deserializing TypeInferenceMetadata.json
+        private class TypeInferenceTypeMetadata
+        {
+            public Dictionary<string, TypeInferenceMethodMetadata>? Methods { get; set; }
+        }
+
+        private class TypeInferenceMethodMetadata
+        {
+            public TypeInferenceCallableMetadata? Callable { get; set; }
+            public string? ReturnTypeRole { get; set; }
+            public string? MergeTypeStrategy { get; set; }
+        }
+
+        private class TypeInferenceCallableMetadata
+        {
+            public int ParameterIndex { get; set; }
+            public string? ReceivesType { get; set; }
+            public string? ReturnsType { get; set; }
+            public int? ParameterCount { get; set; }
         }
     }
 }

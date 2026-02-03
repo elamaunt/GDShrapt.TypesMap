@@ -108,6 +108,24 @@ namespace GDShrapt.TypesMap
         /// </summary>
         public bool ReturnsVoid { get; set; }
 
+        // ========================================
+        // Type Inference Metadata
+        // ========================================
+
+        /// <summary>
+        /// Role of return type relative to container for type inference.
+        /// Values: "element" (returns T), "key" (returns K), "value" (returns V),
+        /// "self" (returns same container type), "keys_array" (Array[K]), "values_array" (Array[V]),
+        /// "callable_return_array" (Array of callable return type)
+        /// </summary>
+        public string? ReturnTypeRole { get; set; }
+
+        /// <summary>
+        /// Strategy for type merging when method modifies container.
+        /// Values: "union_element" (T|U), "union_key_value" (K|K2, V|V2)
+        /// </summary>
+        public string? MergeTypeStrategy { get; set; }
+
         /// <summary>
         /// Initializes a new instance of the <see cref="GDMethodData"/> class.
         /// </summary>
