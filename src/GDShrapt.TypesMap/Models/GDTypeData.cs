@@ -64,6 +64,22 @@ namespace GDShrapt.TypesMap
         public bool IsBuiltin { get; set; }
 
         // ========================================
+        // Type Traits and Operators
+        // ========================================
+
+        /// <summary>
+        /// Gets or sets the type traits that define behavior in GDScript.
+        /// Includes information about numeric, vector, iterable, indexable, nullable properties.
+        /// </summary>
+        public GDTypeTraits? Traits { get; set; }
+
+        /// <summary>
+        /// Gets or sets the operators supported by this type.
+        /// Maps operator symbols to lists of overloads (rightType -> resultType).
+        /// </summary>
+        public GDTypeOperators? Operators { get; set; }
+
+        // ========================================
         // Members (keyed by GDScript names)
         // ========================================
 
