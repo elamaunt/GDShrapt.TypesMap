@@ -116,7 +116,10 @@ namespace GDShrapt.TypesMap
         /// Role of return type relative to container for type inference.
         /// Values: "element" (returns T), "key" (returns K), "value" (returns V),
         /// "self" (returns same container type), "keys_array" (Array[K]), "values_array" (Array[V]),
-        /// "callable_return_array" (Array of callable return type)
+        /// "callable_return_array" (Array of callable return type),
+        /// "common_arg" (returns common type of all arguments with numeric promotion),
+        /// "common_two" (returns common type of first two arguments),
+        /// "first_arg" (returns type of first argument)
         /// </summary>
         public string? ReturnTypeRole { get; set; }
 
@@ -125,6 +128,28 @@ namespace GDShrapt.TypesMap
         /// Values: "union_element" (T|U), "union_key_value" (K|K2, V|V2)
         /// </summary>
         public string? MergeTypeStrategy { get; set; }
+
+        // ========================================
+        // Special Function Attributes (for variadic/range functions)
+        // ========================================
+
+        /// <summary>
+        /// True if this function accepts variable number of arguments (e.g., min, max, str).
+        /// When true, MaxArgs should be -1.
+        /// </summary>
+        public bool IsVarArgs { get; set; }
+
+        /// <summary>
+        /// Minimum number of required arguments for special functions.
+        /// If null, calculated from Parameters array.
+        /// </summary>
+        public int? MinArgs { get; set; }
+
+        /// <summary>
+        /// Maximum number of arguments for special functions.
+        /// -1 means unlimited (varargs). If null, calculated from Parameters array.
+        /// </summary>
+        public int? MaxArgs { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GDMethodData"/> class.

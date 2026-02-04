@@ -229,8 +229,125 @@ namespace GDShrapt.TypesMap
             methodDatas["print_debug"] = new List<GDMethodData>() { new GDMethodData("print_debug", typeof(GD).GetMethod(nameof(GD.Print), new Type[] { typeof(object[]) })!) };
             methodDatas["print_stack"] = new List<GDMethodData>() { new GDMethodData("print_stack", typeof(GD).GetMethod(nameof(GD.Print), new Type[] { typeof(object[]) })!) };
 
-            // range - Iterator creation (maps to GD.Range or Enumerable.Range)
-            methodDatas["range"] = new List<GDMethodData>() { new GDMethodData("range", typeof(GD).GetMethod(nameof(GD.Range), new Type[] { typeof(int) })!) };
+            // range - Iterator creation: range(end), range(begin, end), range(begin, end, step)
+            methodDatas["range"] = new List<GDMethodData>() { new GDMethodData("range", typeof(GD).GetMethod(nameof(GD.Range), new Type[] { typeof(int) })!)
+            {
+                MinArgs = 1,
+                MaxArgs = 3,
+                GDScriptReturnTypeName = "Array"
+            }};
+
+            // ========================================
+            // Special functions with custom arg constraints
+            // ========================================
+
+            // assert(condition), assert(condition, message)
+            AddSpecialFunction(methodDatas, "assert", minArgs: 1, maxArgs: 2, returnType: "void");
+
+            // Variadic min/max functions
+            AddSpecialFunction(methodDatas, "min", minArgs: 2, maxArgs: -1, isVarArgs: true, returnType: "Variant", returnTypeRole: "common_arg");
+            AddSpecialFunction(methodDatas, "max", minArgs: 2, maxArgs: -1, isVarArgs: true, returnType: "Variant", returnTypeRole: "common_arg");
+            AddSpecialFunction(methodDatas, "mini", minArgs: 2, maxArgs: -1, isVarArgs: true, returnType: "int");
+            AddSpecialFunction(methodDatas, "maxi", minArgs: 2, maxArgs: -1, isVarArgs: true, returnType: "int");
+            AddSpecialFunction(methodDatas, "minf", minArgs: 2, maxArgs: 2, returnType: "float");
+            AddSpecialFunction(methodDatas, "maxf", minArgs: 2, maxArgs: 2, returnType: "float");
+
+            // clamp functions - accept Variant in GDScript
+            AddSpecialFunction(methodDatas, "clamp", minArgs: 3, maxArgs: 3, returnType: "Variant", returnTypeRole: "first_arg", variantParameters: true);
+            AddSpecialFunction(methodDatas, "clampi", minArgs: 3, maxArgs: 3, returnType: "int");
+            AddSpecialFunction(methodDatas, "clampf", minArgs: 3, maxArgs: 3, returnType: "float");
+
+            // abs functions - accept Variant in GDScript
+            AddSpecialFunction(methodDatas, "abs", minArgs: 1, maxArgs: 1, returnType: "Variant", returnTypeRole: "first_arg", variantParameters: true);
+            AddSpecialFunction(methodDatas, "absi", minArgs: 1, maxArgs: 1, returnType: "int");
+            AddSpecialFunction(methodDatas, "absf", minArgs: 1, maxArgs: 1, returnType: "float");
+
+            // sign - returns int (always -1, 0, or 1), accepts Variant
+            AddSpecialFunction(methodDatas, "sign", minArgs: 1, maxArgs: 1, returnType: "int", variantParameters: true);
+
+            // lerp(a, b, weight) - returns common type of a and b, accepts Variant
+            AddSpecialFunction(methodDatas, "lerp", minArgs: 3, maxArgs: 3, returnType: "Variant", returnTypeRole: "common_two", variantParameters: true);
+
+            // str(value, ...) - variadic, accepts 0+ args, returns String
+            AddSpecialFunction(methodDatas, "str", minArgs: 0, maxArgs: -1, isVarArgs: true, returnType: "String");
+
+            // print variants - variadic
+            AddSpecialFunction(methodDatas, "print", minArgs: 0, maxArgs: -1, isVarArgs: true, returnType: "void");
+            AddSpecialFunction(methodDatas, "prints", minArgs: 0, maxArgs: -1, isVarArgs: true, returnType: "void");
+            AddSpecialFunction(methodDatas, "printt", minArgs: 0, maxArgs: -1, isVarArgs: true, returnType: "void");
+            AddSpecialFunction(methodDatas, "print_rich", minArgs: 0, maxArgs: -1, isVarArgs: true, returnType: "void");
+            AddSpecialFunction(methodDatas, "printerr", minArgs: 0, maxArgs: -1, isVarArgs: true, returnType: "void");
+            AddSpecialFunction(methodDatas, "printraw", minArgs: 0, maxArgs: -1, isVarArgs: true, returnType: "void");
+
+            // push variants
+            AddSpecialFunction(methodDatas, "push_error", minArgs: 1, maxArgs: -1, isVarArgs: true, returnType: "void");
+            AddSpecialFunction(methodDatas, "push_warning", minArgs: 1, maxArgs: -1, isVarArgs: true, returnType: "void");
+        }
+
+        /// <summary>
+        /// Helper to add a special function with custom argument constraints.
+        /// </summary>
+        private static void AddSpecialFunction(
+            Dictionary<string, List<GDMethodData>> methodDatas,
+            string name,
+            int minArgs,
+            int maxArgs,
+            bool isVarArgs = false,
+            string? returnType = null,
+            string? returnTypeRole = null,
+            bool variantParameters = false)
+        {
+            // Don't override if function already exists from Godot assembly
+            if (methodDatas.ContainsKey(name))
+            {
+                // Update existing entries with special attributes
+                foreach (var method in methodDatas[name])
+                {
+                    method.MinArgs = minArgs;
+                    method.MaxArgs = maxArgs;
+                    method.IsVarArgs = isVarArgs;
+                    if (returnType != null)
+                        method.GDScriptReturnTypeName = returnType;
+                    if (returnTypeRole != null)
+                        method.ReturnTypeRole = returnTypeRole;
+                    // For functions that accept Variant (like clamp, abs), set all parameter types to Variant
+                    if (variantParameters)
+                    {
+                        // Update GDScriptParameterTypeNames
+                        if (method.GDScriptParameterTypeNames != null)
+                        {
+                            for (int i = 0; i < method.GDScriptParameterTypeNames.Length; i++)
+                            {
+                                method.GDScriptParameterTypeNames[i] = "Variant";
+                            }
+                        }
+                        // Update Parameters array (used by CreateParameterList)
+                        if (method.Parameters != null)
+                        {
+                            foreach (var param in method.Parameters)
+                            {
+                                param.GDScriptTypeName = "Variant";
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Create new entry
+                methodDatas[name] = new List<GDMethodData>()
+                {
+                    new GDMethodData
+                    {
+                        GDScriptName = name,
+                        MinArgs = minArgs,
+                        MaxArgs = maxArgs,
+                        IsVarArgs = isVarArgs,
+                        GDScriptReturnTypeName = returnType,
+                        ReturnTypeRole = returnTypeRole
+                    }
+                };
+            }
         }
 
         private static void AddEmbeddedGlobalEnums(Dictionary<string, List<GDEnumTypeInfo>> dictionary)
@@ -1430,6 +1547,21 @@ namespace GDShrapt.TypesMap
         /// </summary>
         internal static void AddEmbeddedBuiltinTypes(Dictionary<string, Dictionary<string, GDTypeData>> typeDatas)
         {
+            // Primitive types - int
+            AddBuiltinType(typeDatas, "int", typeof(long), new Dictionary<string, List<GDMethodData>>(),
+                new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+                new GDTypeTraits { IsNumeric = true }, IntOperators());
+
+            // Primitive types - float
+            AddBuiltinType(typeDatas, "float", typeof(double), new Dictionary<string, List<GDMethodData>>(),
+                new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+                new GDTypeTraits { IsNumeric = true }, FloatOperators());
+
+            // Primitive types - bool
+            AddBuiltinType(typeDatas, "bool", typeof(bool), new Dictionary<string, List<GDMethodData>>(),
+                new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+                null, null);
+
             // Vector2
             AddBuiltinType(typeDatas, "Vector2", typeof(Vector2), new Dictionary<string, List<GDMethodData>>
             {
@@ -1484,7 +1616,7 @@ namespace GDShrapt.TypesMap
                 ["RIGHT"] = CreateConstant("RIGHT", "Vector2"),
                 ["UP"] = CreateConstant("UP", "Vector2"),
                 ["DOWN"] = CreateConstant("DOWN", "Vector2"),
-            });
+            }, VectorTraits("Vector2i"), VectorOperators("Vector2"));
 
             // Vector3
             AddBuiltinType(typeDatas, "Vector3", typeof(Vector3), new Dictionary<string, List<GDMethodData>>
@@ -1540,7 +1672,7 @@ namespace GDShrapt.TypesMap
                 ["DOWN"] = CreateConstant("DOWN", "Vector3"),
                 ["FORWARD"] = CreateConstant("FORWARD", "Vector3"),
                 ["BACK"] = CreateConstant("BACK", "Vector3"),
-            });
+            }, VectorTraits("Vector3i"), VectorOperators("Vector3"));
 
             // Color
             AddBuiltinType(typeDatas, "Color", typeof(Color), new Dictionary<string, List<GDMethodData>>
@@ -1598,7 +1730,7 @@ namespace GDShrapt.TypesMap
                 ["TRANSPARENT"] = CreateConstant("TRANSPARENT", "Color"),
                 ["WHITE"] = CreateConstant("WHITE", "Color"),
                 ["YELLOW"] = CreateConstant("YELLOW", "Color"),
-            });
+            }, new GDTypeTraits { IsIndexable = true }, ColorOperators());
 
             // Signal - special type for signal references
             AddBuiltinType(typeDatas, "Signal", typeof(Signal), new Dictionary<string, List<GDMethodData>>
@@ -1612,7 +1744,7 @@ namespace GDShrapt.TypesMap
                 ["get_object"] = new() { CreateMethod("get_object", "Object") },
                 ["get_object_id"] = new() { CreateMethod("get_object_id", "int") },
                 ["is_null"] = new() { CreateMethod("is_null", "bool") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(), null, null);
 
             // Array
             AddBuiltinType(typeDatas, "Array", typeof(GodotArray), new Dictionary<string, List<GDMethodData>>
@@ -1655,7 +1787,8 @@ namespace GDShrapt.TypesMap
                 ["slice"] = new() { CreateMethodWithDefaults("slice", "Array", ("begin", "int", true), ("end", "int", true), ("step", "int", true), ("deep", "bool", true)) },
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["sort_custom"] = new() { CreateMethod("sort_custom", "void", ("func", "Callable")) },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            ContainerTraits(), ArrayOperators());
 
             // Dictionary
             AddBuiltinType(typeDatas, "Dictionary", typeof(GodotDictionary), new Dictionary<string, List<GDMethodData>>
@@ -1675,7 +1808,8 @@ namespace GDShrapt.TypesMap
                 ["merged"] = new() { CreateMethodWithDefaults("merged", "Dictionary", ("dictionary", "Dictionary", false), ("overwrite", "bool", true)) },
                 ["size"] = new() { CreateMethod("size", "int") },
                 ["values"] = new() { CreateMethod("values", "Array") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            ContainerTraits(), null);
 
             // String methods (for String type)
             AddBuiltinType(typeDatas, "String", typeof(string), new Dictionary<string, List<GDMethodData>>
@@ -1743,7 +1877,8 @@ namespace GDShrapt.TypesMap
                 ["validate_node_name"] = new() { CreateMethod("validate_node_name", "String") },
                 ["xml_escape"] = new() { CreateMethod("xml_escape", "String", ("escape_quotes", "bool")) },
                 ["xml_unescape"] = new() { CreateMethod("xml_unescape", "String") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            StringTraits(), StringOperators());
 
             // Callable
             AddBuiltinType(typeDatas, "Callable", typeof(Callable), new Dictionary<string, List<GDMethodData>>
@@ -1767,7 +1902,7 @@ namespace GDShrapt.TypesMap
                 ["rpc"] = new() { CreateMethodVarargs("rpc", "void") },
                 ["rpc_id"] = new() { CreateMethodVarargs("rpc_id", "void") },
                 ["unbind"] = new() { CreateMethod("unbind", "Callable", ("argcount", "int")) },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(), null, null);
 
             // StringName
             AddBuiltinType(typeDatas, "StringName", typeof(StringName), new Dictionary<string, List<GDMethodData>>
@@ -1782,7 +1917,8 @@ namespace GDShrapt.TypesMap
                 ["rfind"] = new() { CreateMethodWithDefaults("rfind", "int", ("what", "String", false), ("from", "int", true)) },
                 ["to_lower"] = new() { CreateMethod("to_lower", "String") },
                 ["to_upper"] = new() { CreateMethod("to_upper", "String") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            StringTraits(), null);
 
             // NodePath
             AddBuiltinType(typeDatas, "NodePath", typeof(NodePath), new Dictionary<string, List<GDMethodData>>
@@ -1797,7 +1933,7 @@ namespace GDShrapt.TypesMap
                 ["hash"] = new() { CreateMethod("hash", "int") },
                 ["is_absolute"] = new() { CreateMethod("is_absolute", "bool") },
                 ["is_empty"] = new() { CreateMethod("is_empty", "bool") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(), null, null);
 
             // Rect2
             AddBuiltinType(typeDatas, "Rect2", typeof(Rect2), new Dictionary<string, List<GDMethodData>>
@@ -1822,7 +1958,7 @@ namespace GDShrapt.TypesMap
                 ["position"] = CreateProperty("position", "Vector2"),
                 ["size"] = CreateProperty("size", "Vector2"),
                 ["end"] = CreateProperty("end", "Vector2"),
-            }, new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDConstantInfo>(), null, null);
 
             // Vector2i
             AddBuiltinType(typeDatas, "Vector2i", typeof(Vector2I), new Dictionary<string, List<GDMethodData>>
@@ -1851,7 +1987,7 @@ namespace GDShrapt.TypesMap
                 ["RIGHT"] = CreateConstant("RIGHT", "Vector2i"),
                 ["UP"] = CreateConstant("UP", "Vector2i"),
                 ["DOWN"] = CreateConstant("DOWN", "Vector2i"),
-            });
+            }, IntegerVectorTraits("Vector2"), IntegerVectorOperators("Vector2i", "Vector2"));
 
             // Vector3i
             AddBuiltinType(typeDatas, "Vector3i", typeof(Vector3I), new Dictionary<string, List<GDMethodData>>
@@ -1883,7 +2019,7 @@ namespace GDShrapt.TypesMap
                 ["DOWN"] = CreateConstant("DOWN", "Vector3i"),
                 ["FORWARD"] = CreateConstant("FORWARD", "Vector3i"),
                 ["BACK"] = CreateConstant("BACK", "Vector3i"),
-            });
+            }, IntegerVectorTraits("Vector3"), IntegerVectorOperators("Vector3i", "Vector3"));
 
             // Vector4
             AddBuiltinType(typeDatas, "Vector4", typeof(Vector4), new Dictionary<string, List<GDMethodData>>
@@ -1925,7 +2061,7 @@ namespace GDShrapt.TypesMap
                 ["ZERO"] = CreateConstant("ZERO", "Vector4"),
                 ["ONE"] = CreateConstant("ONE", "Vector4"),
                 ["INF"] = CreateConstant("INF", "Vector4"),
-            });
+            }, VectorTraits("Vector4i"), VectorOperators("Vector4"));
 
             // Vector4i
             AddBuiltinType(typeDatas, "Vector4i", typeof(Vector4I), new Dictionary<string, List<GDMethodData>>
@@ -1952,7 +2088,7 @@ namespace GDShrapt.TypesMap
                 ["ONE"] = CreateConstant("ONE", "Vector4i"),
                 ["MIN"] = CreateConstant("MIN", "Vector4i"),
                 ["MAX"] = CreateConstant("MAX", "Vector4i"),
-            });
+            }, IntegerVectorTraits("Vector4"), IntegerVectorOperators("Vector4i", "Vector4"));
 
             // Rect2i
             AddBuiltinType(typeDatas, "Rect2i", typeof(Rect2I), new Dictionary<string, List<GDMethodData>>
@@ -1975,7 +2111,7 @@ namespace GDShrapt.TypesMap
                 ["position"] = CreateProperty("position", "Vector2i"),
                 ["size"] = CreateProperty("size", "Vector2i"),
                 ["end"] = CreateProperty("end", "Vector2i"),
-            }, new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDConstantInfo>(), null, null);
 
             // Transform2D
             AddBuiltinType(typeDatas, "Transform2D", typeof(Transform2D), new Dictionary<string, List<GDMethodData>>
@@ -2010,7 +2146,7 @@ namespace GDShrapt.TypesMap
                 ["IDENTITY"] = CreateConstant("IDENTITY", "Transform2D"),
                 ["FLIP_X"] = CreateConstant("FLIP_X", "Transform2D"),
                 ["FLIP_Y"] = CreateConstant("FLIP_Y", "Transform2D"),
-            });
+            }, TransformTraits(), Transform2DOperators());
 
             // Transform3D
             AddBuiltinType(typeDatas, "Transform3D", typeof(Transform3D), new Dictionary<string, List<GDMethodData>>
@@ -2038,7 +2174,7 @@ namespace GDShrapt.TypesMap
                 ["FLIP_X"] = CreateConstant("FLIP_X", "Transform3D"),
                 ["FLIP_Y"] = CreateConstant("FLIP_Y", "Transform3D"),
                 ["FLIP_Z"] = CreateConstant("FLIP_Z", "Transform3D"),
-            });
+            }, TransformTraits(), Transform3DOperators());
 
             // Basis
             AddBuiltinType(typeDatas, "Basis", typeof(Basis), new Dictionary<string, List<GDMethodData>>
@@ -2072,7 +2208,7 @@ namespace GDShrapt.TypesMap
                 ["FLIP_X"] = CreateConstant("FLIP_X", "Basis"),
                 ["FLIP_Y"] = CreateConstant("FLIP_Y", "Basis"),
                 ["FLIP_Z"] = CreateConstant("FLIP_Z", "Basis"),
-            });
+            }, TransformTraits(), BasisOperators());
 
             // Quaternion
             AddBuiltinType(typeDatas, "Quaternion", typeof(Quaternion), new Dictionary<string, List<GDMethodData>>
@@ -2105,7 +2241,7 @@ namespace GDShrapt.TypesMap
             }, new Dictionary<string, GDConstantInfo>
             {
                 ["IDENTITY"] = CreateConstant("IDENTITY", "Quaternion"),
-            });
+            }, null, QuaternionOperators());
 
             // Plane
             AddBuiltinType(typeDatas, "Plane", typeof(Plane), new Dictionary<string, List<GDMethodData>>
@@ -2134,7 +2270,7 @@ namespace GDShrapt.TypesMap
                 ["PLANE_XY"] = CreateConstant("PLANE_XY", "Plane"),
                 ["PLANE_XZ"] = CreateConstant("PLANE_XZ", "Plane"),
                 ["PLANE_YZ"] = CreateConstant("PLANE_YZ", "Plane"),
-            });
+            }, null, null);
 
             // AABB
             AddBuiltinType(typeDatas, "AABB", typeof(Aabb), new Dictionary<string, List<GDMethodData>>
@@ -2169,14 +2305,14 @@ namespace GDShrapt.TypesMap
                 ["position"] = CreateProperty("position", "Vector3"),
                 ["size"] = CreateProperty("size", "Vector3"),
                 ["end"] = CreateProperty("end", "Vector3"),
-            }, new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDConstantInfo>(), null, null);
 
             // RID
             AddBuiltinType(typeDatas, "RID", typeof(Rid), new Dictionary<string, List<GDMethodData>>
             {
                 ["get_id"] = new() { CreateMethod("get_id", "int") },
                 ["is_valid"] = new() { CreateMethod("is_valid", "bool") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(), null, null);
 
             // PackedByteArray
             AddBuiltinType(typeDatas, "PackedByteArray", typeof(byte[]), new Dictionary<string, List<GDMethodData>>
@@ -2236,7 +2372,8 @@ namespace GDShrapt.TypesMap
                 ["to_float64_array"] = new() { CreateMethod("to_float64_array", "PackedFloat64Array") },
                 ["to_int32_array"] = new() { CreateMethod("to_int32_array", "PackedInt32Array") },
                 ["to_int64_array"] = new() { CreateMethod("to_int64_array", "PackedInt64Array") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            PackedArrayTraits("int"), PackedArrayOperators("PackedByteArray"));
 
             // PackedStringArray
             AddBuiltinType(typeDatas, "PackedStringArray", typeof(string[]), new Dictionary<string, List<GDMethodData>>
@@ -2262,7 +2399,8 @@ namespace GDShrapt.TypesMap
                 ["slice"] = new() { CreateMethodWithDefaults("slice", "PackedStringArray", ("begin", "int", false), ("end", "int", true)) },
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["to_byte_array"] = new() { CreateMethod("to_byte_array", "PackedByteArray") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            PackedArrayTraits("String"), PackedArrayOperators("PackedStringArray"));
 
             // PackedInt32Array
             AddBuiltinType(typeDatas, "PackedInt32Array", typeof(int[]), new Dictionary<string, List<GDMethodData>>
@@ -2288,7 +2426,8 @@ namespace GDShrapt.TypesMap
                 ["slice"] = new() { CreateMethodWithDefaults("slice", "PackedInt32Array", ("begin", "int", false), ("end", "int", true)) },
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["to_byte_array"] = new() { CreateMethod("to_byte_array", "PackedByteArray") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            PackedArrayTraits("int"), PackedArrayOperators("PackedInt32Array"));
 
             // PackedInt64Array
             AddBuiltinType(typeDatas, "PackedInt64Array", typeof(long[]), new Dictionary<string, List<GDMethodData>>
@@ -2314,7 +2453,8 @@ namespace GDShrapt.TypesMap
                 ["slice"] = new() { CreateMethodWithDefaults("slice", "PackedInt64Array", ("begin", "int", false), ("end", "int", true)) },
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["to_byte_array"] = new() { CreateMethod("to_byte_array", "PackedByteArray") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            PackedArrayTraits("int"), PackedArrayOperators("PackedInt64Array"));
 
             // PackedFloat32Array
             AddBuiltinType(typeDatas, "PackedFloat32Array", typeof(float[]), new Dictionary<string, List<GDMethodData>>
@@ -2340,7 +2480,8 @@ namespace GDShrapt.TypesMap
                 ["slice"] = new() { CreateMethodWithDefaults("slice", "PackedFloat32Array", ("begin", "int", false), ("end", "int", true)) },
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["to_byte_array"] = new() { CreateMethod("to_byte_array", "PackedByteArray") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            PackedArrayTraits("float"), PackedArrayOperators("PackedFloat32Array"));
 
             // PackedFloat64Array
             AddBuiltinType(typeDatas, "PackedFloat64Array", typeof(double[]), new Dictionary<string, List<GDMethodData>>
@@ -2366,7 +2507,8 @@ namespace GDShrapt.TypesMap
                 ["slice"] = new() { CreateMethodWithDefaults("slice", "PackedFloat64Array", ("begin", "int", false), ("end", "int", true)) },
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["to_byte_array"] = new() { CreateMethod("to_byte_array", "PackedByteArray") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            PackedArrayTraits("float"), PackedArrayOperators("PackedFloat64Array"));
 
             // PackedVector2Array
             AddBuiltinType(typeDatas, "PackedVector2Array", typeof(Vector2[]), new Dictionary<string, List<GDMethodData>>
@@ -2392,7 +2534,8 @@ namespace GDShrapt.TypesMap
                 ["slice"] = new() { CreateMethodWithDefaults("slice", "PackedVector2Array", ("begin", "int", false), ("end", "int", true)) },
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["to_byte_array"] = new() { CreateMethod("to_byte_array", "PackedByteArray") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            PackedArrayTraits("Vector2"), PackedArrayOperators("PackedVector2Array"));
 
             // PackedVector3Array
             AddBuiltinType(typeDatas, "PackedVector3Array", typeof(Vector3[]), new Dictionary<string, List<GDMethodData>>
@@ -2418,7 +2561,8 @@ namespace GDShrapt.TypesMap
                 ["slice"] = new() { CreateMethodWithDefaults("slice", "PackedVector3Array", ("begin", "int", false), ("end", "int", true)) },
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["to_byte_array"] = new() { CreateMethod("to_byte_array", "PackedByteArray") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            PackedArrayTraits("Vector3"), PackedArrayOperators("PackedVector3Array"));
 
             // PackedVector4Array
             AddBuiltinType(typeDatas, "PackedVector4Array", typeof(Vector4[]), new Dictionary<string, List<GDMethodData>>
@@ -2444,7 +2588,8 @@ namespace GDShrapt.TypesMap
                 ["slice"] = new() { CreateMethodWithDefaults("slice", "PackedVector4Array", ("begin", "int", false), ("end", "int", true)) },
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["to_byte_array"] = new() { CreateMethod("to_byte_array", "PackedByteArray") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            PackedArrayTraits("Vector4"), PackedArrayOperators("PackedVector4Array"));
 
             // PackedColorArray
             AddBuiltinType(typeDatas, "PackedColorArray", typeof(Color[]), new Dictionary<string, List<GDMethodData>>
@@ -2470,7 +2615,8 @@ namespace GDShrapt.TypesMap
                 ["slice"] = new() { CreateMethodWithDefaults("slice", "PackedColorArray", ("begin", "int", false), ("end", "int", true)) },
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["to_byte_array"] = new() { CreateMethod("to_byte_array", "PackedByteArray") },
-            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>());
+            }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
+            PackedArrayTraits("Color"), PackedArrayOperators("PackedColorArray"));
         }
 
         private static void AddBuiltinType(
@@ -2479,7 +2625,9 @@ namespace GDShrapt.TypesMap
             Type csharpType,
             Dictionary<string, List<GDMethodData>> methods,
             Dictionary<string, GDPropertyData> properties,
-            Dictionary<string, GDConstantInfo> constants)
+            Dictionary<string, GDConstantInfo> constants,
+            GDTypeTraits? traits = null,
+            GDTypeOperators? operators = null)
         {
             var typeData = new GDTypeData
             {
@@ -2494,7 +2642,9 @@ namespace GDShrapt.TypesMap
                 Constants = constants,
                 SignalDatas = new Dictionary<string, GDSignalData>(),
                 Enums = new Dictionary<string, GDEnumTypeInfo>(),
-                EnumsConstants = new Dictionary<string, GDEnumTypeInfo>()
+                EnumsConstants = new Dictionary<string, GDEnumTypeInfo>(),
+                Traits = traits,
+                Operators = operators
             };
 
             if (!typeDatas.TryGetValue(gdScriptName, out var dict))
@@ -2647,5 +2797,297 @@ namespace GDShrapt.TypesMap
                 _ => gdType
             };
         }
+
+        // ========================================
+        // Type Traits Factory Methods
+        // ========================================
+
+        private static GDTypeTraits VectorTraits(string? intVariant = null) => new()
+        {
+            IsVector = true,
+            IsIndexable = true,
+            IntVariant = intVariant
+        };
+
+        private static GDTypeTraits IntegerVectorTraits(string floatVariant) => new()
+        {
+            IsVector = true,
+            IsIntegerVector = true,
+            IsIndexable = true,
+            FloatVariant = floatVariant
+        };
+
+        private static GDTypeTraits TransformTraits() => new()
+        {
+            IsTransform = true,
+            IsIndexable = true
+        };
+
+        private static GDTypeTraits ContainerTraits() => new()
+        {
+            IsContainer = true,
+            IsIterable = true,
+            IsIndexable = true,
+            IsNullable = false // Value types in GDScript
+        };
+
+        private static GDTypeTraits StringTraits() => new()
+        {
+            IsStringLike = true,
+            IsIterable = true,
+            IsIndexable = true
+        };
+
+        private static GDTypeTraits PackedArrayTraits(string elementType) => new()
+        {
+            IsPackedArray = true,
+            IsIterable = true,
+            IsIndexable = true,
+            PackedElementType = elementType
+        };
+
+        // ========================================
+        // Type Operators Factory Methods
+        // ========================================
+
+        private static GDTypeOperators IntOperators() => new()
+        {
+            Addition = new()
+            {
+                new("int", "int"),
+                new("float", "float")
+            },
+            Subtraction = new()
+            {
+                new("int", "int"),
+                new("float", "float")
+            },
+            Multiplication = new()
+            {
+                new("int", "int"),
+                new("float", "float"),
+                new("Vector2", "Vector2"),
+                new("Vector2i", "Vector2i"),
+                new("Vector3", "Vector3"),
+                new("Vector3i", "Vector3i"),
+                new("Vector4", "Vector4"),
+                new("Vector4i", "Vector4i"),
+                new("Color", "Color"),
+                new("Quaternion", "Quaternion")
+            },
+            Division = new()
+            {
+                new("int", "float"),
+                new("float", "float")
+            },
+            Modulo = new()
+            {
+                new("int", "int"),
+                new("float", "float")
+            },
+            Power = new()
+            {
+                new("int", "int"),
+                new("float", "float")
+            },
+            Negate = new(null, "int"),
+            BitwiseAnd = new() { new("int", "int") },
+            BitwiseOr = new() { new("int", "int") },
+            BitwiseXor = new() { new("int", "int") },
+            BitwiseNot = new(null, "int"),
+            ShiftLeft = new() { new("int", "int") },
+            ShiftRight = new() { new("int", "int") }
+        };
+
+        private static GDTypeOperators FloatOperators() => new()
+        {
+            Addition = new()
+            {
+                new("int", "float"),
+                new("float", "float")
+            },
+            Subtraction = new()
+            {
+                new("int", "float"),
+                new("float", "float")
+            },
+            Multiplication = new()
+            {
+                new("int", "float"),
+                new("float", "float"),
+                new("Vector2", "Vector2"),
+                new("Vector2i", "Vector2"),
+                new("Vector3", "Vector3"),
+                new("Vector3i", "Vector3"),
+                new("Vector4", "Vector4"),
+                new("Vector4i", "Vector4"),
+                new("Color", "Color"),
+                new("Quaternion", "Quaternion")
+            },
+            Division = new()
+            {
+                new("int", "float"),
+                new("float", "float")
+            },
+            Modulo = new()
+            {
+                new("int", "float"),
+                new("float", "float")
+            },
+            Power = new()
+            {
+                new("int", "float"),
+                new("float", "float")
+            },
+            Negate = new(null, "float")
+        };
+
+        private static GDTypeOperators VectorOperators(string vectorType) => new()
+        {
+            Addition = new() { new(vectorType, vectorType) },
+            Subtraction = new() { new(vectorType, vectorType) },
+            Multiplication = new()
+            {
+                new(vectorType, vectorType),
+                new("int", vectorType),
+                new("float", vectorType)
+            },
+            Division = new()
+            {
+                new(vectorType, vectorType),
+                new("int", vectorType),
+                new("float", vectorType)
+            },
+            Modulo = new()
+            {
+                new(vectorType, vectorType),
+                new("int", vectorType),
+                new("float", vectorType)
+            },
+            Negate = new(null, vectorType)
+        };
+
+        private static GDTypeOperators IntegerVectorOperators(string vectorType, string floatVariant) => new()
+        {
+            Addition = new() { new(vectorType, vectorType) },
+            Subtraction = new() { new(vectorType, vectorType) },
+            Multiplication = new()
+            {
+                new(vectorType, vectorType),
+                new("int", vectorType),
+                new("float", floatVariant)
+            },
+            Division = new()
+            {
+                new(vectorType, vectorType),
+                new("int", vectorType),
+                new("float", floatVariant)
+            },
+            Modulo = new()
+            {
+                new(vectorType, vectorType),
+                new("int", vectorType)
+            },
+            Negate = new(null, vectorType)
+        };
+
+        private static GDTypeOperators TransformOperators(string transformType) => new()
+        {
+            Multiplication = new()
+            {
+                new(transformType, transformType)
+            }
+        };
+
+        private static GDTypeOperators Transform2DOperators() => new()
+        {
+            Multiplication = new()
+            {
+                new("Transform2D", "Transform2D"),
+                new("Vector2", "Vector2"),
+                new("Rect2", "Rect2"),
+                new("PackedVector2Array", "PackedVector2Array")
+            }
+        };
+
+        private static GDTypeOperators Transform3DOperators() => new()
+        {
+            Multiplication = new()
+            {
+                new("Transform3D", "Transform3D"),
+                new("Vector3", "Vector3"),
+                new("AABB", "AABB"),
+                new("Plane", "Plane"),
+                new("PackedVector3Array", "PackedVector3Array")
+            }
+        };
+
+        private static GDTypeOperators BasisOperators() => new()
+        {
+            Multiplication = new()
+            {
+                new("Basis", "Basis"),
+                new("Vector3", "Vector3")
+            }
+        };
+
+        private static GDTypeOperators QuaternionOperators() => new()
+        {
+            Addition = new() { new("Quaternion", "Quaternion") },
+            Subtraction = new() { new("Quaternion", "Quaternion") },
+            Multiplication = new()
+            {
+                new("Quaternion", "Quaternion"),
+                new("Vector3", "Vector3"),
+                new("int", "Quaternion"),
+                new("float", "Quaternion")
+            },
+            Division = new()
+            {
+                new("int", "Quaternion"),
+                new("float", "Quaternion")
+            },
+            Negate = new(null, "Quaternion")
+        };
+
+        private static GDTypeOperators ColorOperators() => new()
+        {
+            Addition = new() { new("Color", "Color") },
+            Subtraction = new() { new("Color", "Color") },
+            Multiplication = new()
+            {
+                new("Color", "Color"),
+                new("int", "Color"),
+                new("float", "Color")
+            },
+            Division = new()
+            {
+                new("int", "Color"),
+                new("float", "Color")
+            },
+            Negate = new(null, "Color")
+        };
+
+        private static GDTypeOperators StringOperators() => new()
+        {
+            Addition = new()
+            {
+                new(null, "String") // String + any = String
+            },
+            Modulo = new()
+            {
+                new(null, "String") // String % any = String (format)
+            }
+        };
+
+        private static GDTypeOperators ArrayOperators() => new()
+        {
+            Addition = new() { new("Array", "Array") }
+        };
+
+        private static GDTypeOperators PackedArrayOperators(string packedType) => new()
+        {
+            Addition = new() { new(packedType, packedType) }
+        };
     }
 }
