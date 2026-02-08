@@ -244,29 +244,56 @@ namespace GDShrapt.TypesMap
             // assert(condition), assert(condition, message)
             AddSpecialFunction(methodDatas, "assert", minArgs: 1, maxArgs: 2, returnType: "void");
 
-            // Variadic min/max functions
-            AddSpecialFunction(methodDatas, "min", minArgs: 2, maxArgs: -1, isVarArgs: true, returnType: "Variant", returnTypeRole: "common_arg");
-            AddSpecialFunction(methodDatas, "max", minArgs: 2, maxArgs: -1, isVarArgs: true, returnType: "Variant", returnTypeRole: "common_arg");
-            AddSpecialFunction(methodDatas, "mini", minArgs: 2, maxArgs: -1, isVarArgs: true, returnType: "int");
-            AddSpecialFunction(methodDatas, "maxi", minArgs: 2, maxArgs: -1, isVarArgs: true, returnType: "int");
-            AddSpecialFunction(methodDatas, "minf", minArgs: 2, maxArgs: 2, returnType: "float");
-            AddSpecialFunction(methodDatas, "maxf", minArgs: 2, maxArgs: 2, returnType: "float");
-
-            // clamp functions - accept Variant in GDScript
-            AddSpecialFunction(methodDatas, "clamp", minArgs: 3, maxArgs: 3, returnType: "Variant", returnTypeRole: "first_arg", variantParameters: true);
-            AddSpecialFunction(methodDatas, "clampi", minArgs: 3, maxArgs: 3, returnType: "int");
-            AddSpecialFunction(methodDatas, "clampf", minArgs: 3, maxArgs: 3, returnType: "float");
-
-            // abs functions - accept Variant in GDScript
-            AddSpecialFunction(methodDatas, "abs", minArgs: 1, maxArgs: 1, returnType: "Variant", returnTypeRole: "first_arg", variantParameters: true);
+            // abs: polymorphic — real overloads instead of Variant
+            AddOverload(methodDatas, "abs", new[] { "int" }, "int", returnTypeRole: "first_arg");
+            AddOverload(methodDatas, "abs", new[] { "float" }, "float", returnTypeRole: "first_arg");
             AddSpecialFunction(methodDatas, "absi", minArgs: 1, maxArgs: 1, returnType: "int");
             AddSpecialFunction(methodDatas, "absf", minArgs: 1, maxArgs: 1, returnType: "float");
 
-            // sign - returns int (always -1, 0, or 1), accepts Variant
-            AddSpecialFunction(methodDatas, "sign", minArgs: 1, maxArgs: 1, returnType: "int", variantParameters: true);
+            // sign: polymorphic — returns same type as input
+            AddOverload(methodDatas, "sign", new[] { "int" }, "int", returnTypeRole: "first_arg");
+            AddOverload(methodDatas, "sign", new[] { "float" }, "float", returnTypeRole: "first_arg");
+            // signi/signf already defined in AddEmbeddedGlobalMethods
 
-            // lerp(a, b, weight) - returns common type of a and b, accepts Variant
-            AddSpecialFunction(methodDatas, "lerp", minArgs: 3, maxArgs: 3, returnType: "Variant", returnTypeRole: "common_two", variantParameters: true);
+            // clamp: polymorphic
+            AddOverload(methodDatas, "clamp", new[] { "int", "int", "int" }, "int", returnTypeRole: "first_arg");
+            AddOverload(methodDatas, "clamp", new[] { "float", "float", "float" }, "float", returnTypeRole: "first_arg");
+            AddSpecialFunction(methodDatas, "clampi", minArgs: 3, maxArgs: 3, returnType: "int");
+            AddSpecialFunction(methodDatas, "clampf", minArgs: 3, maxArgs: 3, returnType: "float");
+
+            // lerp: polymorphic with many type variants
+            AddOverload(methodDatas, "lerp", new[] { "int", "int", "float" }, "int", returnTypeRole: "common_two");
+            AddOverload(methodDatas, "lerp", new[] { "float", "float", "float" }, "float", returnTypeRole: "common_two");
+            AddOverload(methodDatas, "lerp", new[] { "Color", "Color", "float" }, "Color", returnTypeRole: "common_two");
+            AddOverload(methodDatas, "lerp", new[] { "Vector2", "Vector2", "float" }, "Vector2", returnTypeRole: "common_two");
+            AddOverload(methodDatas, "lerp", new[] { "Vector3", "Vector3", "float" }, "Vector3", returnTypeRole: "common_two");
+            AddOverload(methodDatas, "lerp", new[] { "Vector4", "Vector4", "float" }, "Vector4", returnTypeRole: "common_two");
+
+            // min/max: polymorphic, variadic
+            AddOverload(methodDatas, "min", new[] { "int", "int" }, "int", returnTypeRole: "common_arg", isVarArgs: true, minArgs: 2);
+            AddOverload(methodDatas, "min", new[] { "float", "float" }, "float", returnTypeRole: "common_arg", isVarArgs: true, minArgs: 2);
+            AddSpecialFunction(methodDatas, "mini", minArgs: 2, maxArgs: -1, isVarArgs: true, returnType: "int");
+            AddSpecialFunction(methodDatas, "maxi", minArgs: 2, maxArgs: -1, isVarArgs: true, returnType: "int");
+            AddOverload(methodDatas, "max", new[] { "int", "int" }, "int", returnTypeRole: "common_arg", isVarArgs: true, minArgs: 2);
+            AddOverload(methodDatas, "max", new[] { "float", "float" }, "float", returnTypeRole: "common_arg", isVarArgs: true, minArgs: 2);
+            AddSpecialFunction(methodDatas, "minf", minArgs: 2, maxArgs: 2, returnType: "float");
+            AddSpecialFunction(methodDatas, "maxf", minArgs: 2, maxArgs: 2, returnType: "float");
+
+            // wrap: polymorphic
+            AddOverload(methodDatas, "wrap", new[] { "int", "int", "int" }, "int");
+            AddOverload(methodDatas, "wrap", new[] { "float", "float", "float" }, "float");
+
+            // snapped: polymorphic
+            AddOverload(methodDatas, "snapped", new[] { "int", "int" }, "int");
+            AddOverload(methodDatas, "snapped", new[] { "float", "float" }, "float");
+
+            // ceil/floor/round: polymorphic
+            AddOverload(methodDatas, "ceil", new[] { "int" }, "int");
+            AddOverload(methodDatas, "ceil", new[] { "float" }, "float");
+            AddOverload(methodDatas, "floor", new[] { "int" }, "int");
+            AddOverload(methodDatas, "floor", new[] { "float" }, "float");
+            AddOverload(methodDatas, "round", new[] { "int" }, "int");
+            AddOverload(methodDatas, "round", new[] { "float" }, "float");
 
             // str(value, ...) - variadic, accepts 0+ args, returns String
             AddSpecialFunction(methodDatas, "str", minArgs: 0, maxArgs: -1, isVarArgs: true, returnType: "String");
@@ -347,6 +374,65 @@ namespace GDShrapt.TypesMap
                         ReturnTypeRole = returnTypeRole
                     }
                 };
+            }
+        }
+
+        /// <summary>
+        /// Adds a concrete overload for a polymorphic function.
+        /// Unlike AddSpecialFunction which modifies existing entries, this adds new entries to the list.
+        /// </summary>
+        private static void AddOverload(
+            Dictionary<string, List<GDMethodData>> methodDatas,
+            string name,
+            string[] paramTypes,
+            string returnType,
+            string? returnTypeRole = null,
+            bool isVarArgs = false,
+            int? minArgs = null,
+            int? maxArgs = null)
+        {
+            var parameters = new GDParameterInfo[paramTypes.Length];
+            for (int i = 0; i < paramTypes.Length; i++)
+            {
+                parameters[i] = new GDParameterInfo
+                {
+                    CSharpName = $"arg{i}",
+                    GDScriptTypeName = paramTypes[i],
+                    Position = i
+                };
+            }
+
+            var method = new GDMethodData
+            {
+                GDScriptName = name,
+                GDScriptReturnTypeName = returnType,
+                GDScriptParameterTypeNames = paramTypes,
+                Parameters = parameters,
+                IsVarArgs = isVarArgs,
+                MinArgs = minArgs ?? paramTypes.Length,
+                MaxArgs = maxArgs ?? (isVarArgs ? -1 : paramTypes.Length),
+                ReturnTypeRole = returnTypeRole
+            };
+
+            if (methodDatas.ContainsKey(name))
+            {
+                // Replace the existing list (first AddOverload replaces reflection-based entries)
+                // Subsequent AddOverload calls append to the list
+                var list = methodDatas[name];
+                // If the first entry was from reflection (has CSharpName set on the method), replace the list
+                if (list.Count > 0 && list[0].CSharpName != null && list[0].Parameters != null &&
+                    list[0].Parameters.Length > 0 && list[0].Parameters[0].CSharpName != $"arg0")
+                {
+                    methodDatas[name] = new List<GDMethodData> { method };
+                }
+                else
+                {
+                    list.Add(method);
+                }
+            }
+            else
+            {
+                methodDatas[name] = new List<GDMethodData> { method };
             }
         }
 
