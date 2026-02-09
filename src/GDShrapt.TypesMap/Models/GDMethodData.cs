@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace GDShrapt.TypesMap
@@ -87,6 +89,12 @@ namespace GDShrapt.TypesMap
         /// Gets or sets the generic type parameter names (e.g., ["T", "TResult"]).
         /// </summary>
         public string[]? GenericTypeParameters { get; set; }
+
+        /// <summary>
+        /// Gets or sets the generic type parameter constraints.
+        /// Key: parameter name (e.g., "T"), Value: base type constraint names (e.g., ["Godot.Node"]).
+        /// </summary>
+        public Dictionary<string, string[]>? GenericConstraints { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether the method is virtual.
@@ -192,7 +200,21 @@ namespace GDShrapt.TypesMap
 
             if (method.IsGenericMethod)
             {
-                GenericTypeParameters = method.GetGenericArguments().Select(t => t.Name).ToArray();
+                var genericArgs = method.GetGenericArguments();
+                GenericTypeParameters = genericArgs.Select(t => t.Name).ToArray();
+
+                var constraints = new Dictionary<string, string[]>();
+                foreach (var arg in genericArgs)
+                {
+                    var baseTypes = arg.GetGenericParameterConstraints()
+                        .Select(t => t.FullName ?? t.Name)
+                        .ToArray();
+                    if (baseTypes.Length > 0)
+                        constraints[arg.Name] = baseTypes;
+                }
+
+                if (constraints.Count > 0)
+                    GenericConstraints = constraints;
             }
 
             CSharpDeclaringTypeFullName = method.DeclaringType?.FullName;
