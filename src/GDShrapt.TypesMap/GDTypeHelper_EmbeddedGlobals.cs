@@ -222,8 +222,14 @@ namespace GDShrapt.TypesMap
             // type_exists - Check if class exists
             methodDatas["type_exists"] = new List<GDMethodData>() { new GDMethodData("type_exists", typeof(ClassDB).GetMethod(nameof(ClassDB.ClassExists), new Type[] { typeof(StringName) })!) };
 
-            // is_instance_of - Type checking
-            methodDatas["is_instance_of"] = new List<GDMethodData>() { new GDMethodData("is_instance_of", typeof(GodotObject).GetMethod(nameof(GodotObject.IsInstanceValid))!) };
+            // is_instance_of - Type checking: is_instance_of(value: Variant, type: Variant) -> bool
+            methodDatas["is_instance_of"] = new List<GDMethodData>() { new GDMethodData("is_instance_of", typeof(GodotObject).GetMethod(nameof(GodotObject.IsInstanceValid))!)
+            {
+                MinArgs = 2,
+                MaxArgs = 2,
+                GDScriptParameterTypeNames = new[] { "Variant", "Variant" },
+                GDScriptReturnTypeName = "bool"
+            }};
 
             // print_debug, print_stack, get_stack - Debug functions
             methodDatas["print_debug"] = new List<GDMethodData>() { new GDMethodData("print_debug", typeof(GD).GetMethod(nameof(GD.Print), new Type[] { typeof(object[]) })!) };
