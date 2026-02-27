@@ -116,7 +116,7 @@ namespace GDShrapt.TypesMap
             methodDatas["str_to_var"] = new List<GDMethodData>() { new GDMethodData("str_to_var", typeof(GD).GetMethod(nameof(GD.StrToVar))!) };
             methodDatas["tan"] = new List<GDMethodData>() { new GDMethodData("tan", typeof(Mathf).GetMethod(nameof(Mathf.Tan), new Type[] { typeof(double) })!) };
             methodDatas["tanh"] = new List<GDMethodData>() { new GDMethodData("tanh", typeof(Mathf).GetMethod(nameof(Mathf.Tanh), new Type[] { typeof(double) })!) };
-            methodDatas["typeof"] = new List<GDMethodData>() { new GDMethodData("typeof", typeof(Variant).GetMethod("get_" + nameof(Variant.VariantType))!) };
+            methodDatas["typeof"] = new List<GDMethodData>() { new GDMethodData("typeof", typeof(Variant).GetMethod("get_" + nameof(Variant.VariantType))!) { MinArgs = 1, MaxArgs = 1, GDScriptParameterTypeNames = new[] { "Variant" } } };
             methodDatas["var_to_str"] = new List<GDMethodData>() { new GDMethodData("var_to_str", typeof(GD).GetMethod(nameof(GD.VarToStr))!) };
             methodDatas["wrap"] = new List<GDMethodData>() { new GDMethodData("wrap", typeof(Mathf).GetMethod(nameof(Mathf.Wrap), new Type[] { typeof(double), typeof(double), typeof(double) })!) };
             methodDatas["wrapf"] = new List<GDMethodData>() { new GDMethodData("wrapf", typeof(Mathf).GetMethod(nameof(Mathf.Wrap), new Type[] { typeof(float), typeof(float), typeof(float) })!) };

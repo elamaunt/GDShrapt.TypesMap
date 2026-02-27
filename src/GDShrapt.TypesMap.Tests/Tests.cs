@@ -292,6 +292,22 @@ namespace GDShrapt.TypesMap.Tests
         }
 
         [TestMethod]
+        public void EmbeddedGlobals_Typeof_HasCorrectArgCount()
+        {
+            var data = GDTypeHelper.ExtractTypeDatasFromManifest();
+
+            Assert.IsNotNull(data?.GlobalData?.MethodDatas);
+            Assert.IsTrue(data.GlobalData.MethodDatas.ContainsKey("typeof"), "Missing typeof method");
+
+            var typeofMethods = data.GlobalData.MethodDatas["typeof"];
+            Assert.IsTrue(typeofMethods.Count > 0, "typeof should have at least one overload");
+
+            var typeofMethod = typeofMethods[0];
+            Assert.AreEqual(1, typeofMethod.MinArgs, "typeof should require exactly 1 argument (MinArgs)");
+            Assert.AreEqual(1, typeofMethod.MaxArgs, "typeof should accept exactly 1 argument (MaxArgs)");
+        }
+
+        [TestMethod]
         public void GlobalData_ContainsPackedVector4Array()
         {
             var data = GDTypeHelper.ExtractTypeDatasFromManifest();
