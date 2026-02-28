@@ -143,6 +143,9 @@ namespace GDShrapt.TypesMap
             if (type == typeof(float) || type == typeof(double) || type == typeof(Single) || type == typeof(Double)) return "float";
             if (type == typeof(string) || type == typeof(String)) return "String";
 
+            // GodotObject is the C# name for GDScript's Object
+            if (type.Name == "GodotObject") return "Object";
+
             // For Godot types, use the type name directly
             return type.Name;
         }
