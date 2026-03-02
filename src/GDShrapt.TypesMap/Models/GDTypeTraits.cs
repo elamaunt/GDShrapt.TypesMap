@@ -90,6 +90,13 @@ namespace GDShrapt.TypesMap
         public string? PackedElementType { get; set; }
 
         /// <summary>
+        /// GDScript types this type can be implicitly converted to.
+        /// Populated based on GDScript language rules (e.g., int → float, Array → PackedStringArray).
+        /// Null if no implicit conversions exist.
+        /// </summary>
+        public string[]? ImplicitlyConvertibleTo { get; set; }
+
+        /// <summary>
         /// Creates default traits for an unknown type.
         /// </summary>
         public GDTypeTraits()
@@ -116,7 +123,8 @@ namespace GDShrapt.TypesMap
                 IsContainer = IsContainer,
                 FloatVariant = FloatVariant,
                 IntVariant = IntVariant,
-                PackedElementType = PackedElementType
+                PackedElementType = PackedElementType,
+                ImplicitlyConvertibleTo = ImplicitlyConvertibleTo
             };
         }
     }

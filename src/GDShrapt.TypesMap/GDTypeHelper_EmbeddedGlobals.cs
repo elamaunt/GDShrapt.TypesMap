@@ -1642,12 +1642,12 @@ namespace GDShrapt.TypesMap
             // Primitive types - int
             AddBuiltinType(typeDatas, "int", typeof(long), new Dictionary<string, List<GDMethodData>>(),
                 new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
-                new GDTypeTraits { IsNumeric = true }, IntOperators());
+                new GDTypeTraits { IsNumeric = true, ImplicitlyConvertibleTo = new[] { "float" } }, IntOperators());
 
             // Primitive types - float
             AddBuiltinType(typeDatas, "float", typeof(double), new Dictionary<string, List<GDMethodData>>(),
                 new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
-                new GDTypeTraits { IsNumeric = true }, FloatOperators());
+                new GDTypeTraits { IsNumeric = true, ImplicitlyConvertibleTo = new[] { "int" } }, FloatOperators());
 
             // Primitive types - bool
             AddBuiltinType(typeDatas, "bool", typeof(bool), new Dictionary<string, List<GDMethodData>>(),
@@ -1880,7 +1880,17 @@ namespace GDShrapt.TypesMap
                 ["sort"] = new() { CreateMethod("sort", "void") },
                 ["sort_custom"] = new() { CreateMethod("sort_custom", "void", ("func", "Callable")) },
             }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
-            ContainerTraits(), ArrayOperators());
+            new GDTypeTraits
+            {
+                IsContainer = true, IsIterable = true, IsIndexable = true, IsNullable = false,
+                ImplicitlyConvertibleTo = new[]
+                {
+                    "PackedByteArray", "PackedInt32Array", "PackedInt64Array",
+                    "PackedFloat32Array", "PackedFloat64Array",
+                    "PackedStringArray", "PackedVector2Array", "PackedVector3Array",
+                    "PackedVector4Array", "PackedColorArray"
+                }
+            }, ArrayOperators());
 
             // Dictionary
             AddBuiltinType(typeDatas, "Dictionary", typeof(GodotDictionary), new Dictionary<string, List<GDMethodData>>
@@ -2010,7 +2020,7 @@ namespace GDShrapt.TypesMap
                 ["to_lower"] = new() { CreateMethod("to_lower", "String") },
                 ["to_upper"] = new() { CreateMethod("to_upper", "String") },
             }, new Dictionary<string, GDPropertyData>(), new Dictionary<string, GDConstantInfo>(),
-            StringTraits(), null);
+            new GDTypeTraits { IsStringLike = true, IsIterable = true, IsIndexable = true, ImplicitlyConvertibleTo = new[] { "String" } }, null);
 
             // NodePath
             AddBuiltinType(typeDatas, "NodePath", typeof(NodePath), new Dictionary<string, List<GDMethodData>>
@@ -2927,7 +2937,8 @@ namespace GDShrapt.TypesMap
         {
             IsStringLike = true,
             IsIterable = true,
-            IsIndexable = true
+            IsIndexable = true,
+            ImplicitlyConvertibleTo = new[] { "StringName" }
         };
 
         private static GDTypeTraits PackedArrayTraits(string elementType) => new()
@@ -2935,7 +2946,8 @@ namespace GDShrapt.TypesMap
             IsPackedArray = true,
             IsIterable = true,
             IsIndexable = true,
-            PackedElementType = elementType
+            PackedElementType = elementType,
+            ImplicitlyConvertibleTo = new[] { "Array" }
         };
 
         // ========================================
