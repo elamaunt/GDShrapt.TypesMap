@@ -2938,7 +2938,7 @@ namespace GDShrapt.TypesMap
             IsStringLike = true,
             IsIterable = true,
             IsIndexable = true,
-            ImplicitlyConvertibleTo = new[] { "StringName" }
+            ImplicitlyConvertibleTo = new[] { "StringName", "NodePath" }
         };
 
         private static GDTypeTraits PackedArrayTraits(string elementType) => new()

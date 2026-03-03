@@ -114,6 +114,29 @@ namespace GDShrapt.TypesMap
         public Dictionary<string, GDEnumTypeInfo>? EnumsConstants { get; set; }
 
         /// <summary>
+        /// Creates built-in methods that all GDScript enum types have.
+        /// </summary>
+        public static Dictionary<string, List<GDMethodData>> CreateEnumBuiltinMethods()
+        {
+            return new Dictionary<string, List<GDMethodData>>
+            {
+                ["values"] = new() { new GDMethodData { GDScriptName = "values", GDScriptReturnTypeName = "Array", IsStatic = true } },
+                ["keys"] = new() { new GDMethodData { GDScriptName = "keys", GDScriptReturnTypeName = "Array", IsStatic = true } },
+                ["size"] = new() { new GDMethodData { GDScriptName = "size", GDScriptReturnTypeName = "int", IsStatic = true } },
+                ["has"] = new() { new GDMethodData
+                {
+                    GDScriptName = "has", GDScriptReturnTypeName = "bool", IsStatic = true,
+                    Parameters = new[] { new GDParameterInfo { GDScriptTypeName = "int", CSharpName = "value" } }
+                }},
+                ["find_key"] = new() { new GDMethodData
+                {
+                    GDScriptName = "find_key", GDScriptReturnTypeName = "Variant", IsStatic = true,
+                    Parameters = new[] { new GDParameterInfo { GDScriptTypeName = "int", CSharpName = "value" } }
+                }}
+            };
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GDTypeData"/> class.
         /// </summary>
         public GDTypeData()
