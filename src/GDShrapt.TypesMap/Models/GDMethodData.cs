@@ -245,8 +245,30 @@ namespace GDShrapt.TypesMap
             // GodotObject is the C# name for GDScript's Object
             if (type.Name == "GodotObject") return "Object";
 
+            // C# array types → GDScript PackedArray types
+            if (type.IsArray)
+            {
+                var elementType = type.GetElementType()!;
+                return MapCSharpArrayToGDScript(elementType);
+            }
+
             // For Godot types, use the type name directly (usually matches)
             return type.Name;
+        }
+
+        private static string MapCSharpArrayToGDScript(Type elementType)
+        {
+            if (elementType == typeof(byte)) return "PackedByteArray";
+            if (elementType == typeof(int) || elementType == typeof(Int32)) return "PackedInt32Array";
+            if (elementType == typeof(long) || elementType == typeof(Int64)) return "PackedInt64Array";
+            if (elementType == typeof(float) || elementType == typeof(Single)) return "PackedFloat32Array";
+            if (elementType == typeof(double) || elementType == typeof(Double)) return "PackedFloat64Array";
+            if (elementType == typeof(string) || elementType == typeof(String)) return "PackedStringArray";
+            if (elementType.Name == "Vector2") return "PackedVector2Array";
+            if (elementType.Name == "Vector3") return "PackedVector3Array";
+            if (elementType.Name == "Vector4") return "PackedVector4Array";
+            if (elementType.Name == "Color") return "PackedColorArray";
+            return "Array";
         }
     }
 }

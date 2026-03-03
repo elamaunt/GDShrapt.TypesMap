@@ -91,6 +91,8 @@ namespace GDShrapt.TypesMap
 
                 if (data != null)
                 {
+                    NormalizeGDScriptTypeNames(data);
+
                     if (data.Metadata == null)
                     {
                         data.Metadata = new GDAssemblyMetadata { Source = "Manifest" };
@@ -158,6 +160,8 @@ namespace GDShrapt.TypesMap
 
                 if (data != null)
                 {
+                    NormalizeGDScriptTypeNames(data);
+
                     if (data.Metadata == null)
                     {
                         data.Metadata = new GDAssemblyMetadata();
@@ -695,6 +699,134 @@ namespace GDShrapt.TypesMap
             public string? ReceivesType { get; set; }
             public string? ReturnsType { get; set; }
             public int? ParameterCount { get; set; }
+        }
+
+        /// <summary>
+        /// Normalizes a C# type name to its GDScript equivalent.
+        /// Handles scalar types (Int64→int, Single→float, etc.) and
+        /// array types (Int64[]→PackedInt64Array, Byte[]→PackedByteArray, etc.).
+        /// </summary>
+        public static string NormalizeCSharpTypeName(string typeName)
+        {
+            if (typeName == "GodotObject") return "Object";
+
+            if (typeName == "Int64") return "int";
+            if (typeName == "Int32") return "int";
+            if (typeName == "Byte") return "int";
+            if (typeName == "Single") return "float";
+            if (typeName == "Double") return "float";
+            if (typeName == "Boolean") return "bool";
+
+            return typeName switch
+            {
+                "Byte[]" => "PackedByteArray",
+                "Int32[]" => "PackedInt32Array",
+                "Int64[]" => "PackedInt64Array",
+                "Single[]" => "PackedFloat32Array",
+                "Double[]" => "PackedFloat64Array",
+                "String[]" => "PackedStringArray",
+                "Vector2[]" => "PackedVector2Array",
+                "Vector3[]" => "PackedVector3Array",
+                "Vector4[]" => "PackedVector4Array",
+                "Color[]" => "PackedColorArray",
+                "Object[]" => "Array",
+                "Variant[]" => "Array",
+                _ => typeName,
+            };
+        }
+
+        /// <summary>
+        /// Post-processes deserialized AssemblyData to normalize all GDScript type names
+        /// that may contain raw C# type notation (e.g., "Int64[]" instead of "PackedInt64Array").
+        /// </summary>
+        public static void NormalizeGDScriptTypeNames(GDAssemblyData data)
+        {
+            if (data == null) return;
+
+            if (data.TypeDatas != null)
+            {
+                foreach (var typeVariants in data.TypeDatas.Values)
+                {
+                    foreach (var typeData in typeVariants.Values)
+                    {
+                        NormalizeTypeData(typeData);
+                    }
+                }
+            }
+
+            if (data.GlobalData != null)
+            {
+                NormalizeGlobalData(data.GlobalData);
+            }
+        }
+
+        private static void NormalizeTypeData(GDTypeData typeData)
+        {
+            if (typeData.GDScriptBaseTypeName != null)
+                typeData.GDScriptBaseTypeName = NormalizeCSharpTypeName(typeData.GDScriptBaseTypeName);
+
+            if (typeData.MethodDatas != null)
+            {
+                foreach (var methods in typeData.MethodDatas.Values)
+                {
+                    foreach (var method in methods)
+                        NormalizeMethodData(method);
+                }
+            }
+
+            if (typeData.PropertyDatas != null)
+            {
+                foreach (var property in typeData.PropertyDatas.Values)
+                {
+                    if (property.GDScriptTypeName != null)
+                        property.GDScriptTypeName = NormalizeCSharpTypeName(property.GDScriptTypeName);
+                }
+            }
+        }
+
+        private static void NormalizeMethodData(GDMethodData method)
+        {
+            if (method.GDScriptReturnTypeName != null)
+                method.GDScriptReturnTypeName = NormalizeCSharpTypeName(method.GDScriptReturnTypeName);
+
+            if (method.GDScriptParameterTypeNames != null)
+            {
+                for (int i = 0; i < method.GDScriptParameterTypeNames.Length; i++)
+                {
+                    if (method.GDScriptParameterTypeNames[i] != null)
+                        method.GDScriptParameterTypeNames[i] = NormalizeCSharpTypeName(method.GDScriptParameterTypeNames[i]);
+                }
+            }
+
+            if (method.Parameters != null)
+            {
+                foreach (var param in method.Parameters)
+                {
+                    if (param.GDScriptTypeName != null)
+                        param.GDScriptTypeName = NormalizeCSharpTypeName(param.GDScriptTypeName);
+                }
+            }
+        }
+
+        private static void NormalizeGlobalData(GDGlobalData globalData)
+        {
+            if (globalData.MethodDatas != null)
+            {
+                foreach (var methods in globalData.MethodDatas.Values)
+                {
+                    foreach (var method in methods)
+                        NormalizeMethodData(method);
+                }
+            }
+
+            if (globalData.PropertyDatas != null)
+            {
+                foreach (var property in globalData.PropertyDatas.Values)
+                {
+                    if (property.GDScriptTypeName != null)
+                        property.GDScriptTypeName = NormalizeCSharpTypeName(property.GDScriptTypeName);
+                }
+            }
         }
     }
 }
