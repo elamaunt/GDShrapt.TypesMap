@@ -492,7 +492,8 @@ namespace GDShrapt.TypesMap
 
             if (type.IsEnum)
             {
-                var dotNetConstants = Enum.GetValues(type).Cast<object>().Select(x => x.ToString()!).ToArray();
+                var enumValues = Enum.GetValues(type);
+                var dotNetConstants = enumValues.Cast<object>().Select(x => x.ToString()!).ToArray();
 
                 var declaring = type.DeclaringType;
 
@@ -512,7 +513,11 @@ namespace GDShrapt.TypesMap
                 }
 
                 for (int i = 0; i < dotNetConstants.Length; i++)
-                    constants.Add(godotConstants[i], new GDConstantInfo(godotConstants[i], dotNetConstants[i], type.BaseType ?? typeof(long), type));
+                {
+                    var info = new GDConstantInfo(godotConstants[i], dotNetConstants[i], type.BaseType ?? typeof(long), type);
+                    info.IntValue = Convert.ToInt64(enumValues.GetValue(i));
+                    constants.Add(godotConstants[i], info);
+                }
             }
             else
             {
@@ -526,7 +531,19 @@ namespace GDShrapt.TypesMap
                 }
 
                 for (int i = 0; i < dotNetConstants.Length; i++)
-                    constants.Add(godotConstants[i], new GDConstantInfo(godotConstants[i], dotNetConstants[i].Name, dotNetConstants[i].FieldType, type));
+                {
+                    var info = new GDConstantInfo(godotConstants[i], dotNetConstants[i].Name, dotNetConstants[i].FieldType, type);
+
+                    try
+                    {
+                        var rawValue = dotNetConstants[i].GetRawConstantValue();
+                        if (rawValue != null)
+                            info.IntValue = Convert.ToInt64(rawValue);
+                    }
+                    catch { }
+
+                    constants.Add(godotConstants[i], info);
+                }
             }
 
             return constants;

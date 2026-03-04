@@ -43,6 +43,11 @@ namespace GDShrapt.TypesMap
         public string? Value { get; set; }
 
         /// <summary>
+        /// Gets or sets the numeric integer value (for enum constants).
+        /// </summary>
+        public long? IntValue { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GDConstantInfo"/> class.
         /// </summary>
         public GDConstantInfo()

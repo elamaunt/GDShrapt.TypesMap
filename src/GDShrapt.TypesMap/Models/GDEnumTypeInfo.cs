@@ -20,6 +20,12 @@ namespace GDShrapt.TypesMap
         /// </summary>
         public Dictionary<string, string>? Values { get; set; }
 
+        /// <summary>
+        /// Gets or sets the mapping of GDScript enum constant names to their integer values.
+        /// Key: GDScript constant name (e.g., "SIDE_LEFT"), Value: numeric value (e.g., 0).
+        /// </summary>
+        public Dictionary<string, long>? IntValues { get; set; }
+
         // ========================================
         // C# Names
         // ========================================
@@ -55,10 +61,12 @@ namespace GDShrapt.TypesMap
             CSharpEnumName = csharpEnumType.Name;
 
             Values = new Dictionary<string, string>();
+            IntValues = new Dictionary<string, long>();
 
             for (int i = 0; i < gdScriptConstants.Length; i++)
             {
                 Values[gdScriptConstants[i]] = csharpValues.GetValue(i)!.ToString()!;
+                IntValues[gdScriptConstants[i]] = Convert.ToInt64(csharpValues.GetValue(i));
             }
         }
     }
