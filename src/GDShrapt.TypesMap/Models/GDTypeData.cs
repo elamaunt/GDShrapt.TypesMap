@@ -80,6 +80,22 @@ namespace GDShrapt.TypesMap
         public GDTypeOperators? Operators { get; set; }
 
         // ========================================
+        // Documentation
+        // ========================================
+
+        /// <summary>
+        /// Gets or sets the brief one-line description of this type.
+        /// Populated from extension_api.json "brief_description" field.
+        /// </summary>
+        public string? BriefDescription { get; set; }
+
+        /// <summary>
+        /// Gets or sets the full description of this type.
+        /// Populated from extension_api.json "description" field. Contains BBCode formatting.
+        /// </summary>
+        public string? Description { get; set; }
+
+        // ========================================
         // Members (keyed by GDScript names)
         // ========================================
 

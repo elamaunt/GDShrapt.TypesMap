@@ -34,6 +34,16 @@ namespace GDShrapt.TypesMap
         public string? CSharpContainingTypeName { get; set; }
 
         // ========================================
+        // Documentation
+        // ========================================
+
+        /// <summary>
+        /// Gets or sets the constant description from Godot documentation.
+        /// Contains BBCode formatting from extension_api.json.
+        /// </summary>
+        public string? Description { get; set; }
+
+        // ========================================
         // Value Information
         // ========================================
 

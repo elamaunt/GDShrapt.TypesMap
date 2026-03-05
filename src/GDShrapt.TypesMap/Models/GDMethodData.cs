@@ -138,6 +138,16 @@ namespace GDShrapt.TypesMap
         public string? MergeTypeStrategy { get; set; }
 
         // ========================================
+        // Documentation
+        // ========================================
+
+        /// <summary>
+        /// Gets or sets the method description from Godot documentation.
+        /// Contains BBCode formatting from extension_api.json.
+        /// </summary>
+        public string? Description { get; set; }
+
+        // ========================================
         // Special Function Attributes (for variadic/range functions)
         // ========================================
 

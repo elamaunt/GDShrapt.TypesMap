@@ -122,6 +122,9 @@ namespace GDShrapt.TypesMap
 
                     // Apply type inference metadata from embedded JSON
                     ApplyTypeInferenceMetadata(data);
+
+                    // Apply documentation from embedded JSON
+                    ApplyDocumentationData(data);
                 }
 
                 _cachedManifestData = data;
@@ -692,6 +695,124 @@ namespace GDShrapt.TypesMap
                         {
                             methodData.MergeTypeStrategy = methodMetadata.MergeTypeStrategy;
                         }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Applies documentation data from embedded DocumentationData.json.
+        /// This enriches types, methods, properties, signals, constants and enums with description text.
+        /// </summary>
+        private static void ApplyDocumentationData(GDAssemblyData data)
+        {
+            if (!TryParseJsonFromManifest<GDDocumentationData>("DocumentationData.json", out var docData))
+                return;
+
+            if (docData == null)
+                return;
+
+            // Apply type-level documentation
+            if (docData.Types != null && data.TypeDatas != null)
+            {
+                foreach (var (typeName, typeDocs) in docData.Types)
+                {
+                    if (!data.TypeDatas.TryGetValue(typeName, out var typeDict) || typeDict == null)
+                        continue;
+
+                    foreach (var typeData in typeDict.Values)
+                    {
+                        typeData.BriefDescription = typeDocs.Brief;
+                        typeData.Description = typeDocs.Description;
+
+                        // Methods
+                        if (typeDocs.Methods != null && typeData.MethodDatas != null)
+                        {
+                            foreach (var (methodName, methodDesc) in typeDocs.Methods)
+                            {
+                                if (typeData.MethodDatas.TryGetValue(methodName, out var methodList) && methodList != null)
+                                {
+                                    foreach (var method in methodList)
+                                        method.Description = methodDesc;
+                                }
+                            }
+                        }
+
+                        // Properties
+                        if (typeDocs.Properties != null && typeData.PropertyDatas != null)
+                        {
+                            foreach (var (propName, propDesc) in typeDocs.Properties)
+                            {
+                                if (typeData.PropertyDatas.TryGetValue(propName, out var prop) && prop != null)
+                                    prop.Description = propDesc;
+                            }
+                        }
+
+                        // Signals
+                        if (typeDocs.Signals != null && typeData.SignalDatas != null)
+                        {
+                            foreach (var (signalName, signalDesc) in typeDocs.Signals)
+                            {
+                                if (typeData.SignalDatas.TryGetValue(signalName, out var signal) && signal != null)
+                                    signal.Description = signalDesc;
+                            }
+                        }
+
+                        // Constants
+                        if (typeDocs.Constants != null && typeData.Constants != null)
+                        {
+                            foreach (var (constName, constDesc) in typeDocs.Constants)
+                            {
+                                if (typeData.Constants.TryGetValue(constName, out var constant) && constant != null)
+                                    constant.Description = constDesc;
+                            }
+                        }
+
+                        // Enums
+                        if (typeDocs.Enums != null && typeData.Enums != null)
+                        {
+                            foreach (var (enumName, enumDesc) in typeDocs.Enums)
+                            {
+                                if (typeData.Enums.TryGetValue(enumName, out var enumInfo) && enumInfo != null)
+                                    enumInfo.Description = enumDesc;
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Apply global function documentation
+            if (docData.GlobalFunctions != null && data.GlobalData?.MethodDatas != null)
+            {
+                foreach (var (funcName, funcDesc) in docData.GlobalFunctions)
+                {
+                    if (data.GlobalData.MethodDatas.TryGetValue(funcName, out var methodList) && methodList != null)
+                    {
+                        foreach (var method in methodList)
+                            method.Description = funcDesc;
+                    }
+                }
+            }
+
+            // Apply global constant documentation
+            if (docData.GlobalConstants != null && data.GlobalData?.Constants != null)
+            {
+                foreach (var (constName, constDesc) in docData.GlobalConstants)
+                {
+                    if (data.GlobalData.Constants.TryGetValue(constName, out var constant) && constant != null)
+                        constant.Description = constDesc;
+                }
+            }
+
+            // Apply global enum documentation
+            if (docData.GlobalEnums != null && data.GlobalData?.Enums != null)
+            {
+                foreach (var (enumName, enumDesc) in docData.GlobalEnums)
+                {
+                    if (data.GlobalData.Enums.TryGetValue(enumName, out var enumList) && enumList != null)
+                    {
+                        foreach (var enumInfo in enumList)
+                            enumInfo.Description = enumDesc;
                     }
                 }
             }

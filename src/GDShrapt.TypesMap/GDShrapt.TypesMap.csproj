@@ -48,11 +48,13 @@ v4.5.1.0:
   <ItemGroup>
     <None Remove="Files\AssemblyData.json" />
     <None Remove="Files\TypeInferenceMetadata.json" />
+    <None Remove="Files\DocumentationData.json" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Files\AssemblyData.json" />
     <EmbeddedResource Include="Files\TypeInferenceMetadata.json" />
+    <EmbeddedResource Include="Files\DocumentationData.json" />
   </ItemGroup>
 
   <ItemGroup>

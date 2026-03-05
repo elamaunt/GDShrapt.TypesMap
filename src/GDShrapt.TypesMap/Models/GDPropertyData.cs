@@ -46,6 +46,16 @@ namespace GDShrapt.TypesMap
         public string? CSharpDeclaringTypeFullName { get; set; }
 
         // ========================================
+        // Documentation
+        // ========================================
+
+        /// <summary>
+        /// Gets or sets the property description from Godot documentation.
+        /// Contains BBCode formatting from extension_api.json.
+        /// </summary>
+        public string? Description { get; set; }
+
+        // ========================================
         // Property Characteristics
         // ========================================
 

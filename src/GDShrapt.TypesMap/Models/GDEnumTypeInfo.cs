@@ -27,6 +27,16 @@ namespace GDShrapt.TypesMap
         public Dictionary<string, long>? IntValues { get; set; }
 
         // ========================================
+        // Documentation
+        // ========================================
+
+        /// <summary>
+        /// Gets or sets the enum description from Godot documentation.
+        /// Contains BBCode formatting from extension_api.json.
+        /// </summary>
+        public string? Description { get; set; }
+
+        // ========================================
         // C# Names
         // ========================================
 

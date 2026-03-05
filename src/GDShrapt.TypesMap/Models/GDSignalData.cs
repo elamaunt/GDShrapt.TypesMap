@@ -56,6 +56,16 @@ namespace GDShrapt.TypesMap
         public string? CSharpDeclaringTypeFullName { get; set; }
 
         // ========================================
+        // Documentation
+        // ========================================
+
+        /// <summary>
+        /// Gets or sets the signal description from Godot documentation.
+        /// Contains BBCode formatting from extension_api.json.
+        /// </summary>
+        public string? Description { get; set; }
+
+        // ========================================
         // Detailed Parameter Information
         // ========================================
 
