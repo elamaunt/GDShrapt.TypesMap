@@ -429,6 +429,20 @@ namespace GDShrapt.TypesMap
                 if (list.Count > 0 && list[0].CSharpName != null && list[0].Parameters != null &&
                     list[0].Parameters.Length > 0 && list[0].Parameters[0].CSharpName != $"arg0")
                 {
+                    var reflectionEntry = list[0];
+                    method.CSharpName = reflectionEntry.CSharpName;
+                    method.CSharpReturnTypeName = reflectionEntry.CSharpReturnTypeName;
+                    method.CSharpReturnTypeFullName = reflectionEntry.CSharpReturnTypeFullName;
+                    method.CSharpParameterTypeNames = reflectionEntry.CSharpParameterTypeNames;
+                    method.CSharpDeclaringTypeFullName = reflectionEntry.CSharpDeclaringTypeFullName;
+                    method.IsStatic = reflectionEntry.IsStatic;
+                    method.IsVirtual = reflectionEntry.IsVirtual;
+                    method.IsAbstract = reflectionEntry.IsAbstract;
+                    method.IsOverridable = reflectionEntry.IsOverridable;
+                    method.IsGeneric = reflectionEntry.IsGeneric;
+                    method.GenericTypeParameters = reflectionEntry.GenericTypeParameters;
+                    method.GenericConstraints = reflectionEntry.GenericConstraints;
+
                     methodDatas[name] = new List<GDMethodData> { method };
                 }
                 else

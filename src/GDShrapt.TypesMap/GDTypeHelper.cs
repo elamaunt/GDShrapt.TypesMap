@@ -403,7 +403,7 @@ namespace GDShrapt.TypesMap
                     var property = properties.FirstOrDefault(x => x.Name == operand.Name);
                     if (property != null)
                     {
-                        propertyDatas.Add(loadedString, new GDPropertyData(operand.Name, property));
+                        propertyDatas.Add(loadedString, new GDPropertyData(loadedString, property));
                     }
 
                     loadedString = null;
@@ -793,10 +793,13 @@ namespace GDShrapt.TypesMap
 
             if (typeData.PropertyDatas != null)
             {
-                foreach (var property in typeData.PropertyDatas.Values)
+                foreach (var kvp in typeData.PropertyDatas)
                 {
-                    if (property.GDScriptTypeName != null)
-                        property.GDScriptTypeName = NormalizeCSharpTypeName(property.GDScriptTypeName);
+                    if (kvp.Value.GDScriptName != kvp.Key)
+                        kvp.Value.GDScriptName = kvp.Key;
+
+                    if (kvp.Value.GDScriptTypeName != null)
+                        kvp.Value.GDScriptTypeName = NormalizeCSharpTypeName(kvp.Value.GDScriptTypeName);
                 }
             }
         }
@@ -838,10 +841,13 @@ namespace GDShrapt.TypesMap
 
             if (globalData.PropertyDatas != null)
             {
-                foreach (var property in globalData.PropertyDatas.Values)
+                foreach (var kvp in globalData.PropertyDatas)
                 {
-                    if (property.GDScriptTypeName != null)
-                        property.GDScriptTypeName = NormalizeCSharpTypeName(property.GDScriptTypeName);
+                    if (kvp.Value.GDScriptName != kvp.Key)
+                        kvp.Value.GDScriptName = kvp.Key;
+
+                    if (kvp.Value.GDScriptTypeName != null)
+                        kvp.Value.GDScriptTypeName = NormalizeCSharpTypeName(kvp.Value.GDScriptTypeName);
                 }
             }
         }

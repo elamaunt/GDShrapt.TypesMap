@@ -1,4 +1,5 @@
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace GDShrapt.TypesMap.Tests
 {
@@ -196,9 +197,7 @@ namespace GDShrapt.TypesMap.Tests
             var node2dData = data.TypeDatas["Node2D"].Values.First();
             var positionProperty = node2dData.PropertyDatas!["position"];
 
-            // NOTE: GDScriptName currently stores C# name ("Position") due to JSON generation.
-            // After regeneration from Godot runtime, GDScriptName should be "position" (snake_case)
-            Assert.IsNotNull(positionProperty.GDScriptName);
+            Assert.AreEqual("position", positionProperty.GDScriptName);
             Assert.AreEqual("Position", positionProperty.CSharpName);
             Assert.IsNotNull(positionProperty.CSharpTypeName);
         }
@@ -385,6 +384,59 @@ namespace GDShrapt.TypesMap.Tests
             Assert.IsNotNull(positionProperty.CSharpTypeName, "CSharpTypeName should not be null");
             Assert.IsNotNull(positionProperty.GDScriptName, "GDScriptName should not be null");
             Assert.IsNotNull(positionProperty.CSharpName, "CSharpName should not be null");
+        }
+
+        [TestMethod]
+        public void PropertyData_GDScriptName_IsSnakeCase()
+        {
+            var data = GDTypeHelper.ExtractTypeDatasFromManifest();
+            Assert.IsNotNull(data?.TypeDatas);
+
+            // TextureRect.texture
+            var textureRectData = data.TypeDatas["TextureRect"].Values.First();
+            Assert.IsNotNull(textureRectData.PropertyDatas);
+            Assert.IsTrue(textureRectData.PropertyDatas.ContainsKey("texture"), "TextureRect should have 'texture' property");
+            Assert.AreEqual("texture", textureRectData.PropertyDatas["texture"].GDScriptName);
+
+            // Node2D.position
+            var node2dData = data.TypeDatas["Node2D"].Values.First();
+            Assert.IsNotNull(node2dData.PropertyDatas);
+            Assert.AreEqual("position", node2dData.PropertyDatas["position"].GDScriptName);
+
+            // CanvasItem.visible
+            var canvasItemData = data.TypeDatas["CanvasItem"].Values.First();
+            Assert.IsNotNull(canvasItemData.PropertyDatas);
+            Assert.IsTrue(canvasItemData.PropertyDatas.ContainsKey("visible"), "CanvasItem should have 'visible' property");
+            Assert.AreEqual("visible", canvasItemData.PropertyDatas["visible"].GDScriptName);
+        }
+
+        [TestMethod]
+        public void PropertyData_GDScriptName_MatchesDictionaryKey()
+        {
+            var data = GDTypeHelper.ExtractTypeDatasFromManifest();
+            Assert.IsNotNull(data?.TypeDatas);
+
+            var mismatches = new List<string>();
+
+            foreach (var typeKvp in data.TypeDatas)
+            {
+                foreach (var versionKvp in typeKvp.Value)
+                {
+                    if (versionKvp.Value.PropertyDatas == null)
+                        continue;
+
+                    foreach (var propKvp in versionKvp.Value.PropertyDatas)
+                    {
+                        if (propKvp.Value.GDScriptName != propKvp.Key)
+                        {
+                            mismatches.Add($"{typeKvp.Key}.{propKvp.Key}: key='{propKvp.Key}', GDScriptName='{propKvp.Value.GDScriptName}'");
+                        }
+                    }
+                }
+            }
+
+            Assert.AreEqual(0, mismatches.Count,
+                $"PropertyData dictionary key must match GDScriptName. Mismatches:\n{string.Join("\n", mismatches.Take(20))}");
         }
 
         [TestMethod]
