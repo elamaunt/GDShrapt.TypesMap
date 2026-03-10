@@ -923,6 +923,15 @@ namespace GDShrapt.TypesMap
                         kvp.Value.GDScriptTypeName = NormalizeCSharpTypeName(kvp.Value.GDScriptTypeName);
                 }
             }
+
+            if (typeData.SignalDatas != null)
+            {
+                foreach (var kvp in typeData.SignalDatas)
+                {
+                    if (kvp.Value.GDScriptName != kvp.Key)
+                        kvp.Value.GDScriptName = kvp.Key;
+                }
+            }
         }
 
         private static void NormalizeMethodData(GDMethodData method)
