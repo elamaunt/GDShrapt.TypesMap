@@ -148,6 +148,20 @@ namespace GDShrapt.TypesMap
                     }
                 }
 
+                // Members (builtin value types use "members" instead of "properties")
+                if (cls.Members != null)
+                {
+                    foreach (var member in cls.Members)
+                    {
+                        if (!string.IsNullOrEmpty(member.Name) && !string.IsNullOrEmpty(member.Description))
+                        {
+                            typeDocs.Properties ??= new Dictionary<string, string>();
+                            typeDocs.Properties[member.Name] = member.Description;
+                            hasContent = true;
+                        }
+                    }
+                }
+
                 // Signals
                 if (cls.Signals != null)
                 {
