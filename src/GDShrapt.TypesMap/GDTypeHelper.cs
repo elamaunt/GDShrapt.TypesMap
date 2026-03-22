@@ -237,6 +237,26 @@ namespace GDShrapt.TypesMap
             var definition = AssemblyDefinition.ReadAssembly(assembly.Location);
             var types = assembly.ExportedTypes.ToArray();
 
+            // Map each type to its AssemblyDefinition for Cecil IL inspection
+            var typeDefinitions = new Dictionary<Type, AssemblyDefinition>();
+            foreach (var t in types)
+                typeDefinitions[t] = definition;
+
+            // Also load editor types (EditorPlugin, EditorInspectorPlugin, etc.)
+            try
+            {
+                var editorAssembly = Assembly.Load("GodotSharpEditor");
+                var editorDefinition = AssemblyDefinition.ReadAssembly(editorAssembly.Location);
+                var editorTypes = editorAssembly.ExportedTypes.ToArray();
+                foreach (var t in editorTypes)
+                    typeDefinitions[t] = editorDefinition;
+                types = types.Concat(editorTypes).ToArray();
+            }
+            catch (Exception)
+            {
+                // Editor assembly not available in runtime context
+            }
+
             var typeDatas = new Dictionary<string, Dictionary<string, GDTypeData>>();
             var globalData = new GDGlobalData();
 
@@ -266,7 +286,8 @@ namespace GDShrapt.TypesMap
                 if (!typeDatas.TryGetValue(name, out var dict))
                     typeDatas[name] = dict = new Dictionary<string, GDTypeData>();
 
-                dict.Add(t.FullName!, ExtractTypeData(globalData, name, definition, t, unresolvedBundle, manualMappedGlobalTypes));
+                var typeDefinition = typeDefinitions.TryGetValue(t, out var td) ? td : definition;
+                dict.Add(t.FullName!, ExtractTypeData(globalData, name, typeDefinition, t, unresolvedBundle, manualMappedGlobalTypes));
             }
 
             // Add builtin types (Vector2, Color, Array, etc.) with their methods
