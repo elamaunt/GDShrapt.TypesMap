@@ -246,11 +246,29 @@ namespace GDShrapt.TypesMap
             try
             {
                 var editorAssembly = Assembly.Load("GodotSharpEditor");
-                var editorDefinition = AssemblyDefinition.ReadAssembly(editorAssembly.Location);
-                var editorTypes = editorAssembly.ExportedTypes.ToArray();
-                foreach (var t in editorTypes)
-                    typeDefinitions[t] = editorDefinition;
-                types = types.Concat(editorTypes).ToArray();
+                var editorLocation = editorAssembly.Location;
+
+                // Location can be null/empty for in-memory assemblies.
+                // Fall back to looking next to GodotSharp.dll.
+                if (string.IsNullOrEmpty(editorLocation))
+                {
+                    var mainDir = Path.GetDirectoryName(assembly.Location);
+                    if (!string.IsNullOrEmpty(mainDir))
+                    {
+                        var candidate = Path.Combine(mainDir, "GodotSharpEditor.dll");
+                        if (File.Exists(candidate))
+                            editorLocation = candidate;
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(editorLocation))
+                {
+                    var editorDefinition = AssemblyDefinition.ReadAssembly(editorLocation);
+                    var editorTypes = editorAssembly.ExportedTypes.ToArray();
+                    foreach (var t in editorTypes)
+                        typeDefinitions[t] = editorDefinition;
+                    types = types.Concat(editorTypes).ToArray();
+                }
             }
             catch (Exception)
             {
