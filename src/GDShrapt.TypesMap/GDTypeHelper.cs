@@ -245,7 +245,7 @@ namespace GDShrapt.TypesMap
             // Also load editor types (EditorPlugin, EditorInspectorPlugin, etc.)
             try
             {
-                var editorAssembly = Assembly.Load("GodotSharpEditor");
+				var editorAssembly = Assembly.Load("GodotSharpEditor");
                 var editorLocation = editorAssembly.Location;
 
                 // Location can be null/empty for in-memory assemblies.
@@ -268,10 +268,13 @@ namespace GDShrapt.TypesMap
                     foreach (var t in editorTypes)
                         typeDefinitions[t] = editorDefinition;
                     types = types.Concat(editorTypes).ToArray();
+					GD.Print($"Combined with GodotSharpEditor types");
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+				GD.Print($"GodotSharpEditor types are not generated!");
+				GD.Print(ex);
                 // Editor assembly not available in runtime context
             }
 
